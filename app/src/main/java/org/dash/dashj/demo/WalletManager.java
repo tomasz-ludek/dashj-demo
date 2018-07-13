@@ -2,6 +2,8 @@ package org.dash.dashj.demo;
 
 import com.google.common.collect.ImmutableList;
 
+import org.bitcoinj.core.Context;
+import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.ChildNumber;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
@@ -10,6 +12,7 @@ import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.KeyChainGroup;
 import org.bitcoinj.wallet.Wallet;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -39,17 +42,17 @@ public class WalletManager {
 
     private WalletManager(MainApplication application) {
         walletConfigSet = new HashSet<>();
-        WalletConfig mainnetWallet = new WalletConfig(application, Constants.WALLET_MAINNET_FILENAME, MainNetParams.get());
+        WalletConfig mainnetWallet = new WalletConfig(application, Constants.WALLET_MAINNET_NAME, MainNetParams.get());
         if (!mainnetWallet.exists()) {
             Wallet wallet = createWallet(mainnetWallet, DeterministicKeyChain.BIP44_ACCOUNT_ZERO_PATH);
             mainnetWallet.create(wallet);
         }
-        WalletConfig testnetWallet = new WalletConfig(application, Constants.WALLET_TESTNET3_FILENAME, TestNet3Params.get());
+        WalletConfig testnetWallet = new WalletConfig(application, Constants.WALLET_TESTNET3_NAME, TestNet3Params.get());
         if (!testnetWallet.exists()) {
             Wallet wallet = createWallet(testnetWallet, DeterministicKeyChain.BIP44_ACCOUNT_ZERO_PATH_TESTNET);
             testnetWallet.create(wallet);
         }
-        WalletConfig testnetSeedWallet = new WalletConfig(application, Constants.WALLET_SEED_TESTNET3_FILENAME, TestNet3Params.get());
+        WalletConfig testnetSeedWallet = new WalletConfig(application, Constants.WALLET_SEED_TESTNET3_NAME, TestNet3Params.get());
         if (!testnetSeedWallet.exists()) {
             String[] dummySeed = new String[]{"erode", "bridge", "organ", "you", "often", "teach", "desert", "thrive", "spike", "pottery", "sight", "sport"};
             Wallet wallet = createWallet(testnetSeedWallet, Arrays.asList(dummySeed));
@@ -60,25 +63,56 @@ public class WalletManager {
         walletConfigSet.add(testnetWallet);
         walletConfigSet.add(testnetSeedWallet);
 
-        this.walletConfig = walletConfigSet.iterator().next();
+        walletConfig = mainnetWallet;
+        walletConfig.loadWallet();
 
         org.bitcoinj.core.Context.propagate(walletConfig.getWallet().getContext());
         walletConfig.getWallet().getContext().initDash(true, true);
     }
 
-    public WalletConfig getWalletConfig() {
-        return walletConfig;
+    public boolean isWalletReady() {
+        return walletConfig.getWallet() != null;
+    }
+
+    public Wallet getWallet() {
+        return walletConfig.getWallet();
+    }
+
+    public File getBlockChainFile() {
+        return walletConfig.getBlockChainFile();
+    }
+
+    public NetworkParameters getNetworkParameters() {
+        return walletConfig.getNetworkParameters();
+    }
+
+    public String getCheckpointsFileName() {
+        switch (getNetworkParameters().getId()) {
+            case NetworkParameters.ID_MAINNET: {
+                return Constants.CHECKPOINTS_MAINNET_FILENAME;
+            }
+            case NetworkParameters.ID_TESTNET: {
+                return Constants.CHECKPOINTS_TESTNET_FILENAME;
+            }
+            default: {
+                return null;
+            }
+        }
     }
 
     private Wallet createWallet(WalletConfig walletConfig, ImmutableList<ChildNumber> bip44Path) {
-        Wallet wallet = new Wallet(walletConfig.getNetworkParameters());
+        NetworkParameters networkParameters = walletConfig.getNetworkParameters();
+        org.bitcoinj.core.Context.propagate(new Context(networkParameters));
+        Wallet wallet = new Wallet(networkParameters);
         wallet.addKeyChain(bip44Path);
         return wallet;
     }
 
     private Wallet createWallet(WalletConfig walletConfig, List<String> words) {
+        NetworkParameters networkParameters = walletConfig.getNetworkParameters();
+        org.bitcoinj.core.Context.propagate(new Context(networkParameters));
         DeterministicSeed deterministicSeed = new DeterministicSeed(words, null, "", Constants.EARLIEST_HD_SEED_CREATION_TIME);
-        KeyChainGroup keyChainGroup = new KeyChainGroup(walletConfig.getNetworkParameters(), deterministicSeed);
+        KeyChainGroup keyChainGroup = new KeyChainGroup(networkParameters, deterministicSeed);
         return new Wallet(walletConfig.getNetworkParameters(), keyChainGroup);
     }
 }
