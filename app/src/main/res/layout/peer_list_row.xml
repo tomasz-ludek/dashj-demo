@@ -6,7 +6,7 @@
     android:padding="16dp">
 
     <TextView
-        android:id="@+id/peer_list_row_ip"
+        android:id="@+id/ipView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textStyle="bold" />
@@ -17,13 +17,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/peer_list_row_version"
+            android:id="@+id/versionView"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
         <TextView
-            android:id="@+id/peer_list_row_height"
+            android:id="@+id/heightView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -34,13 +34,13 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/peer_list_row_protocol"
+            android:id="@+id/protocolView"
             android:layout_width="0px"
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
         <TextView
-            android:id="@+id/peer_list_row_ping"
+            android:id="@+id/pingView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
