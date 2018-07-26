@@ -21,4 +21,6 @@ public interface Constants {
     int MAX_CONNECTED_PEERS = 6;
     int PEER_DISCOVERY_TIMEOUT_MS = (int) TimeUnit.MINUTES.toMillis(10);
     int PEER_TIMEOUT_MS = (int) TimeUnit.MINUTES.toMillis(15);
+
+    int MAX_BLOCKS = 128;
 }

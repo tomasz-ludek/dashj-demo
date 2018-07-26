@@ -6,4 +6,12 @@
     <string name="peer_list_row_ping_time">⇆ %d&#x2009;ms</string>
     <string name="peer_list_row_blocks">%d blocks</string>
     <string name="peer_list_row_protocol">protocol: %d</string>
+
+    <string name="block_list_coinbase">mined</string>
+    <string name="block_list_internal">internal</string>
+    <string name="block_list_row_now">just now</string>
+
+    <string name="symbol_to">→</string>
+    <string name="symbol_from">←</string>
+    <string name="symbol_internal">⇄</string>
 </resources>

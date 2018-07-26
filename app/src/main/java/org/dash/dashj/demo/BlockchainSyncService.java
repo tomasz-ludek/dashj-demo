@@ -9,6 +9,7 @@ import org.bitcoinj.core.CheckpointManager;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Peer;
 import org.bitcoinj.core.PeerGroup;
+import org.bitcoinj.core.StoredBlock;
 import org.bitcoinj.core.listeners.DownloadProgressTracker;
 import org.bitcoinj.core.listeners.PeerConnectedEventListener;
 import org.bitcoinj.core.listeners.PeerDisconnectedEventListener;
@@ -19,6 +20,8 @@ import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.BlockStoreException;
 import org.bitcoinj.store.SPVBlockStore;
 import org.bitcoinj.wallet.Wallet;
+import org.dash.dashj.demo.event.BlockListRequestEvent;
+import org.dash.dashj.demo.event.BlockListUpdateEvent;
 import org.dash.dashj.demo.event.PeerListRequestEvent;
 import org.dash.dashj.demo.event.PeerListUpdateEvent;
 import org.greenrobot.eventbus.EventBus;
@@ -28,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
@@ -98,6 +102,8 @@ public class BlockchainSyncService extends JobService {
         wallet.getContext().initDashSync(getDir(Constants.MASTERNODE_DIR, MODE_PRIVATE).getAbsolutePath());
 
         initPeerGroup(wallet);
+
+        postBlockListEvent();
     }
 
     private void initBlockChain(Wallet wallet, String checkpointAssetPath) {
@@ -177,9 +183,12 @@ public class BlockchainSyncService extends JobService {
                 @Override
                 protected void progress(double pct, int blocksSoFar, Date date) {
                     Log.d(TAG, String.format(Locale.US, "Chain download %d%% done with %d blocks to go, block date %s", (int) pct, blocksSoFar, Utils.dateTimeFormat(date)));
+                    postBlockListEvent();
                 }
             });
         }
+
+        postPeerListEvent();
     }
 
     private PeerConnectedEventListener peerConnectedEventListener = new PeerConnectedEventListener() {
@@ -203,12 +212,35 @@ public class BlockchainSyncService extends JobService {
         postPeerListEvent();
     }
 
+    @Subscribe
+    public void onBlockListRequestEvent(BlockListRequestEvent event) {
+        postBlockListEvent();
+    }
+
     private void postPeerListEvent() {
         List<Peer> connectedPeers = null;
         if (peerGroup != null) {
             connectedPeers = peerGroup.getConnectedPeers();
         }
         EventBus.getDefault().post(new PeerListUpdateEvent(connectedPeers));
+    }
+
+    private void postBlockListEvent() {
+        int maxBlocks = Constants.MAX_BLOCKS;
+        final List<StoredBlock> blocks = new ArrayList<>(maxBlocks);
+        try {
+            StoredBlock block = blockChain.getChainHead();
+            while (block != null) {
+                blocks.add(block);
+                if (blocks.size() >= maxBlocks) {
+                    break;
+                }
+                block = block.getPrev(blockStore);
+            }
+        } catch (final BlockStoreException x) {
+            // swallow
+        }
+        EventBus.getDefault().post(new BlockListUpdateEvent(blocks));
     }
 
     @Override

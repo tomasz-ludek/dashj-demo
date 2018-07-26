@@ -1,5 +1,7 @@
 package org.dash.dashj.demo;
 
+import android.util.Log;
+
 import com.google.common.collect.ImmutableList;
 
 import org.bitcoinj.core.Context;
@@ -63,11 +65,14 @@ public class WalletManager {
         walletConfigSet.add(testnetWallet);
         walletConfigSet.add(testnetSeedWallet);
 
-        walletConfig = mainnetWallet;
+        walletConfig = testnetSeedWallet;
         walletConfig.loadWallet();
 
         org.bitcoinj.core.Context.propagate(walletConfig.getWallet().getContext());
         walletConfig.getWallet().getContext().initDash(true, true);
+
+        Log.d("FreshReceiveAddress", walletConfig.getWallet().freshReceiveAddress().toBase58());
+        Log.d("FreshReceiveAddress", walletConfig.getWallet().toString(true, true, true, null));
     }
 
     public boolean isWalletReady() {

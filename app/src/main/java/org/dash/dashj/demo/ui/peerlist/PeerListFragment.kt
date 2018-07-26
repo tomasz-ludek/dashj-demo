@@ -9,9 +9,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.main_fragment.view.*
+import kotlinx.android.synthetic.main.peer_list_fragment.view.*
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.ui.adapter.PeerViewAdapter
+import org.dash.dashj.demo.ui.adapter.PeerListAdapter
 
 class PeerListFragment : Fragment() {
 
@@ -24,11 +24,11 @@ class PeerListFragment : Fragment() {
         fun newInstance() = PeerListFragment()
     }
 
-    private lateinit var adapter: PeerViewAdapter
+    private lateinit var adapter: PeerListAdapter
     private lateinit var layoutView: View
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        layoutView = inflater.inflate(R.layout.main_fragment, container, false)
+        layoutView = inflater.inflate(R.layout.peer_list_fragment, container, false)
         initPeerRecyclerView()
         return layoutView
     }
@@ -36,7 +36,7 @@ class PeerListFragment : Fragment() {
     private fun initPeerRecyclerView() {
         layoutView.peerRecyclerView.layoutManager = LinearLayoutManager(context)
         layoutView.peerRecyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
-        adapter = PeerViewAdapter(context!!)
+        adapter = PeerListAdapter(context!!)
         layoutView.peerRecyclerView.adapter = adapter
     }
 

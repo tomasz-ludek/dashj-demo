@@ -10,7 +10,7 @@ import org.dash.dashj.demo.ui.adapter.holder.PeerViewHolder
 import java.net.InetAddress
 import java.util.*
 
-class PeerViewAdapter(context: Context) : RecyclerView.Adapter<PeerViewHolder>() {
+class PeerListAdapter(context: Context) : RecyclerView.Adapter<PeerViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private val peers = LinkedList<Peer>()
