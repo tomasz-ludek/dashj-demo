@@ -1,4 +1,4 @@
-package org.dash.dashj.demo.ui.main
+package org.dash.dashj.demo.ui.peerlist
 
 import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
@@ -18,7 +18,7 @@ class PeerListFragment : Fragment() {
     private val NO_PEERS_PLACEHOLDER_VIEW = 0
     private val PEERS_LIST_VIEW = 1
 
-    private lateinit var viewModel: MainViewModel
+    private lateinit var viewModel: PeerListViewModel
 
     companion object {
         fun newInstance() = PeerListFragment()
@@ -42,13 +42,20 @@ class PeerListFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        bindViewModel()
+    }
 
-        viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+    private fun bindViewModel() {
+        viewModel = ViewModelProviders.of(this).get(PeerListViewModel::class.java)
 
         viewModel.peerList.observe(this, Observer { peerList ->
             adapter.replace(peerList)
             layoutView.rootAnimatorView.displayedChild =
                     if (peerList != null) PEERS_LIST_VIEW else NO_PEERS_PLACEHOLDER_VIEW
+        })
+
+        viewModel.hostNames.observe(this, Observer { hostNameMap ->
+            adapter.updateHostNameCache(hostNameMap!!)
         })
     }
 

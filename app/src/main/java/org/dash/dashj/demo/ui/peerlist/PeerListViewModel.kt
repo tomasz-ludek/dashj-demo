@@ -1,34 +1,33 @@
-package org.dash.dashj.demo.ui.main
+package org.dash.dashj.demo.ui.peerlist
 
+import android.app.Application
+import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import android.arch.lifecycle.MutableLiveData
-import android.arch.lifecycle.ViewModel
-import android.os.Handler
 import org.bitcoinj.core.Peer
 import org.dash.dashj.demo.event.PeerListUpdateEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.net.InetAddress
 
-class MainViewModel : ViewModel() {
+class PeerListViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _data = MutableLiveData<String>()
     private val _peerList = MutableLiveData<List<Peer>>()
-
-    val data: LiveData<String>
-        get() = _data
+    private val _hostNameMap = ReverseDnsLiveData()
 
     val peerList: LiveData<List<Peer>>
         get() = _peerList
 
+    val hostNames: LiveData<Map<InetAddress, String>>
+        get() = _hostNameMap
+
     init {
-        _data.value = "Hello, world!"
         EventBus.getDefault().register(this)
-        Handler().postDelayed({ _data.value = "Dupa Jasiu" }, 2000)
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    fun onPeerListRequestEvent(event: PeerListUpdateEvent) {
+    fun onPeerListUpdateEvent(event: PeerListUpdateEvent) {
         _peerList.value = event.peerList
     }
 

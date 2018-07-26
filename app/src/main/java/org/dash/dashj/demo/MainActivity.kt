@@ -2,7 +2,7 @@ package org.dash.dashj.demo
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import org.dash.dashj.demo.ui.main.PeerListFragment
+import org.dash.dashj.demo.ui.peerlist.PeerListFragment
 
 class MainActivity : AppCompatActivity() {
 

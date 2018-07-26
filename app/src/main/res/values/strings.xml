@@ -2,6 +2,7 @@
     <string name="app_name">DashJ Demo</string>
 
     <string name="fragment_peer_list_empty">No peers connected</string>
+    <string name="peer_list_row_host_name_unknown">unknown</string>
     <string name="peer_list_row_ping_time">⇆ %d&#x2009;ms</string>
     <string name="peer_list_row_blocks">%d blocks</string>
     <string name="peer_list_row_protocol">protocol: %d</string>

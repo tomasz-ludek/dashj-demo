@@ -1,6 +1,5 @@
 package org.dash.dashj.demo.ui.adapter.holder
 
-import android.graphics.Typeface
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import kotlinx.android.extensions.LayoutContainer
@@ -13,29 +12,28 @@ class PeerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Layout
     override val containerView: View?
         get() = itemView
 
-    fun bind(peer: Peer) {
+    fun bind(peer: Peer, hostName: String?) {
         val versionMessage = peer.peerVersionMessage
-        val isDownloading = peer.isDownloadData
+        itemView.setBackgroundResource(if (peer.isDownloadData) R.color.highlightBackground else R.color.transparent)
 
         val address = peer.address.addr
         ipView.text = address.hostAddress
+        hostNameView.text = if (address.hostAddress != hostName) hostName else getString(R.string.peer_list_row_host_name_unknown)
 
         val bestHeight = peer.bestHeight
         heightView.text = if (bestHeight > 0) getString(R.string.peer_list_row_blocks, bestHeight) else null
-        heightView.typeface = if (isDownloading) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
-
         versionView.text = versionMessage.subVer
-        versionView.typeface = if (isDownloading) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
-
         protocolView.text = getString(R.string.peer_list_row_protocol, versionMessage.clientVersion)
-        protocolView.typeface = if (isDownloading) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
-
+        masternodeCountView.text = peer.masternodeListCount.toString()
         val pingTime = peer.pingTime
         pingView.text = if (pingTime < java.lang.Long.MAX_VALUE) getString(R.string.peer_list_row_ping_time, pingTime) else null
-        pingView.typeface = if (isDownloading) Typeface.DEFAULT_BOLD else Typeface.DEFAULT
     }
 
     private fun getString(resId: Int, vararg formatArgs: Any): String {
         return itemView.context.getString(resId, *formatArgs)
+    }
+
+    private fun getString(resId: Int): String {
+        return itemView.context.getString(resId)
     }
 }

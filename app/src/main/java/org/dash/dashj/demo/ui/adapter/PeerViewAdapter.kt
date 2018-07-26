@@ -7,12 +7,14 @@ import android.view.ViewGroup
 import org.bitcoinj.core.Peer
 import org.dash.dashj.demo.R
 import org.dash.dashj.demo.ui.adapter.holder.PeerViewHolder
+import java.net.InetAddress
 import java.util.*
 
 class PeerViewAdapter(context: Context) : RecyclerView.Adapter<PeerViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private val peers = LinkedList<Peer>()
+    private val hostNameCache = HashMap<InetAddress, String>()
 
     init {
         setHasStableIds(true)
@@ -20,6 +22,13 @@ class PeerViewAdapter(context: Context) : RecyclerView.Adapter<PeerViewHolder>()
 
     fun clear() {
         peers.clear()
+        notifyDataSetChanged()
+    }
+
+    fun updateHostNameCache(hostNameMap: Map<InetAddress, String>) {
+        hostNameCache.clear()
+        hostNameCache.putAll(hostNameMap)
+
         notifyDataSetChanged()
     }
 
@@ -49,6 +58,7 @@ class PeerViewAdapter(context: Context) : RecyclerView.Adapter<PeerViewHolder>()
 
     override fun onBindViewHolder(holder: PeerViewHolder, position: Int) {
         val peer = getItem(position)
-        holder.bind(peer)
+        val hostName = hostNameCache[peer.address.addr]
+        holder.bind(peer, hostName)
     }
 }
