@@ -19,6 +19,10 @@ import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.BlockStoreException;
 import org.bitcoinj.store.SPVBlockStore;
 import org.bitcoinj.wallet.Wallet;
+import org.dash.dashj.demo.event.PeerListRequestEvent;
+import org.dash.dashj.demo.event.PeerListUpdateEvent;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,10 +47,16 @@ public class BlockchainSyncService extends JobService {
     private PeerGroup peerGroup;
 
     @Override
+    public void onCreate() {
+        super.onCreate();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
     public boolean onStartJob(JobParameters jobParameters) {
         Log.d(TAG, "onStartJob(" + jobParameters + ")");
         doTheJob();
-        return false;
+        return true;
     }
 
     @Override
@@ -55,6 +65,7 @@ public class BlockchainSyncService extends JobService {
 
         if (peerGroup != null) {
             Log.d(TAG, "Stopping peergroup");
+            WalletManager walletManager = WalletManager.getInstance();
             peerGroup.removeDisconnectedEventListener(peerDisconnectedEventListener);
             peerGroup.removeConnectedEventListener(peerConnectedEventListener);
             peerGroup.removeWallet(walletManager.getWallet());
@@ -175,6 +186,7 @@ public class BlockchainSyncService extends JobService {
         @Override
         public void onPeerConnected(Peer peer, int peerCount) {
             Log.d(TAG, String.format("onPeerConnected(%s, %d)", peer.toString(), peerCount));
+            postPeerListEvent();
         }
     };
 
@@ -182,6 +194,26 @@ public class BlockchainSyncService extends JobService {
         @Override
         public void onPeerDisconnected(Peer peer, int peerCount) {
             Log.d(TAG, String.format("onPeerDisconnected(%s, %d)", peer.toString(), peerCount));
+            postPeerListEvent();
         }
     };
+
+    @Subscribe
+    public void onPeerListRequestEvent(PeerListRequestEvent event) {
+        postPeerListEvent();
+    }
+
+    private void postPeerListEvent() {
+        List<Peer> connectedPeers = null;
+        if (peerGroup != null) {
+            connectedPeers = peerGroup.getConnectedPeers();
+        }
+        EventBus.getDefault().post(new PeerListUpdateEvent(connectedPeers));
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 }
