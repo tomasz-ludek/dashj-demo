@@ -29,6 +29,8 @@ import org.bitcoinj.store.SPVBlockStore;
 import org.bitcoinj.wallet.Wallet;
 import org.dash.dashj.demo.event.BlockListRequestEvent;
 import org.dash.dashj.demo.event.BlockListUpdateEvent;
+import org.dash.dashj.demo.event.MasternodeListRequestEvent;
+import org.dash.dashj.demo.event.MasternodeListUpdateEvent;
 import org.dash.dashj.demo.event.PeerListRequestEvent;
 import org.dash.dashj.demo.event.PeerListUpdateEvent;
 import org.dash.dashj.demo.event.SporkListRequestEvent;
@@ -116,6 +118,36 @@ public class BlockchainSyncService extends JobService {
             @Override
             public void onUpdate(SporkMessage spork) {
                 postSporkListEvent(spork);
+            }
+        });
+
+        wallet.getContext().masternodeSync.addEventListener(new MasternodeSyncListener() {
+            @Override
+            public void onSyncStatusChanged(int newStatus, double syncStatus) {
+                postMasternodeListEvent(newStatus);
+                if (newStatus == MasternodeSync.MASTERNODE_SYNC_FINISHED) {
+                    Log.d(TAG, "masternodeSync1");
+                    try {
+                        Log.d(TAG, "masternodeSync2");
+                        org.bitcoinj.core.Context.propagate(WalletManager.getInstance().getWallet().getContext());
+                        Log.d(TAG, "masternodeSync3");
+                    } catch (Throwable ignored) {
+                        Log.d(TAG, "masternodeSync4");
+                    }
+                    Log.d(TAG, "masternodeSync5");
+                    Log.d(TAG, "masternodeSync: " + wallet.getContext().masternodeManager);
+                    Log.d(TAG, "masternodeSync6");
+
+                    FlatDB<MasternodeManager> mndb = new FlatDB<>(getDir(Constants.MASTERNODE_DIR, MODE_PRIVATE).getAbsolutePath(), "mncache.dat", "magicMasternodeCache");
+                    mndb.dump(Context.get().masternodeManager);
+
+                    mndb.load(Context.get().masternodeManager);
+//
+//                if(control == null) {
+//                    control = new MasternodeControl(Context.get(), "masternode.conf");
+//                    control.load();
+//                }
+                }
             }
         });
 
@@ -238,12 +270,20 @@ public class BlockchainSyncService extends JobService {
         postBlockListEvent();
     }
 
+    public void onMasternodeListRequestEvent(MasternodeListRequestEvent event) {
+        postMasternodeListEvent(-1);
+    }
+
     private void postPeerListEvent() {
         List<Peer> connectedPeers = null;
         if (peerGroup != null) {
             connectedPeers = peerGroup.getConnectedPeers();
         }
         EventBus.getDefault().post(new PeerListUpdateEvent(connectedPeers));
+    }
+
+    private void postSporkListEvent(SporkMessage spork) {
+        EventBus.getDefault().post(new SporkListUpdateEvent(spork));
     }
 
     private void postBlockListEvent() {
@@ -263,8 +303,8 @@ public class BlockchainSyncService extends JobService {
         EventBus.getDefault().post(new BlockListUpdateEvent(blocks));
     }
 
-    private void postSporkListEvent(SporkMessage spork) {
-        EventBus.getDefault().post(new SporkListUpdateEvent(spork));
+    private void postMasternodeListEvent(int syncStatus) {
+        EventBus.getDefault().post(new MasternodeListUpdateEvent(syncStatus));
     }
 
     @Override
