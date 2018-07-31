@@ -69,7 +69,7 @@ public class WalletManager {
         walletConfig.loadWallet();
 
         org.bitcoinj.core.Context.propagate(walletConfig.getWallet().getContext());
-        walletConfig.getWallet().getContext().initDash(true, true);
+        walletConfig.getWallet().getContext().initDash(false, true);
 
         Log.d("FreshReceiveAddress", walletConfig.getWallet().freshReceiveAddress().toBase58());
         Log.d("FreshReceiveAddress", walletConfig.getWallet().toString(true, true, true, null));

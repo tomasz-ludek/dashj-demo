@@ -6,9 +6,15 @@ import android.util.Log;
 
 import org.bitcoinj.core.BlockChain;
 import org.bitcoinj.core.CheckpointManager;
+import org.bitcoinj.core.Context;
+import org.bitcoinj.core.MasternodeManager;
+import org.bitcoinj.core.MasternodeSync;
+import org.bitcoinj.core.MasternodeSyncListener;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Peer;
 import org.bitcoinj.core.PeerGroup;
+import org.bitcoinj.core.SporkMessage;
+import org.bitcoinj.core.SporkSyncListener;
 import org.bitcoinj.core.StoredBlock;
 import org.bitcoinj.core.listeners.DownloadProgressTracker;
 import org.bitcoinj.core.listeners.PeerConnectedEventListener;
@@ -18,12 +24,15 @@ import org.bitcoinj.net.discovery.PeerDiscovery;
 import org.bitcoinj.net.discovery.PeerDiscoveryException;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.BlockStoreException;
+import org.bitcoinj.store.FlatDB;
 import org.bitcoinj.store.SPVBlockStore;
 import org.bitcoinj.wallet.Wallet;
 import org.dash.dashj.demo.event.BlockListRequestEvent;
 import org.dash.dashj.demo.event.BlockListUpdateEvent;
 import org.dash.dashj.demo.event.PeerListRequestEvent;
 import org.dash.dashj.demo.event.PeerListUpdateEvent;
+import org.dash.dashj.demo.event.SporkListRequestEvent;
+import org.dash.dashj.demo.event.SporkListUpdateEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -67,15 +76,15 @@ public class BlockchainSyncService extends JobService {
     public boolean onStopJob(JobParameters jobParameters) {
         Log.d(TAG, "onStopJob(" + jobParameters + ")");
 
-        if (peerGroup != null) {
-            Log.d(TAG, "Stopping peergroup");
-            WalletManager walletManager = WalletManager.getInstance();
-            peerGroup.removeDisconnectedEventListener(peerDisconnectedEventListener);
-            peerGroup.removeConnectedEventListener(peerConnectedEventListener);
-            peerGroup.removeWallet(walletManager.getWallet());
-            peerGroup.stopAsync();
-            peerGroup = null;
-        }
+//        if (peerGroup != null) {
+//            Log.d(TAG, "Stopping peergroup");
+//            WalletManager walletManager = WalletManager.getInstance();
+//            peerGroup.removeDisconnectedEventListener(peerDisconnectedEventListener);
+//            peerGroup.removeConnectedEventListener(peerConnectedEventListener);
+//            peerGroup.removeWallet(walletManager.getWallet());
+//            peerGroup.stopAsync();
+//            peerGroup = null;
+//        }
 
         return false;
     }
@@ -91,7 +100,7 @@ public class BlockchainSyncService extends JobService {
 
         NetworkParameters networkParameters = walletManager.getNetworkParameters();
         blockChainFile = walletManager.getBlockChainFile();
-        Wallet wallet = walletManager.getWallet();
+        final Wallet wallet = walletManager.getWallet();
 
         if (!blockChainFile.exists()) {
             Log.d(TAG, "Blockchain does not exist, resetting wallet");
@@ -102,6 +111,13 @@ public class BlockchainSyncService extends JobService {
         wallet.getContext().initDashSync(getDir(Constants.MASTERNODE_DIR, MODE_PRIVATE).getAbsolutePath());
 
         initPeerGroup(wallet);
+
+        wallet.getContext().sporkManager.addEventListener(new SporkSyncListener() {
+            @Override
+            public void onUpdate(SporkMessage spork) {
+                postSporkListEvent(spork);
+            }
+        });
 
         postBlockListEvent();
     }
@@ -213,6 +229,11 @@ public class BlockchainSyncService extends JobService {
     }
 
     @Subscribe
+    public void onSporkListRequestEvent(SporkListRequestEvent event) {
+        postSporkListEvent(null);
+    }
+
+    @Subscribe
     public void onBlockListRequestEvent(BlockListRequestEvent event) {
         postBlockListEvent();
     }
@@ -237,10 +258,13 @@ public class BlockchainSyncService extends JobService {
                 }
                 block = block.getPrev(blockStore);
             }
-        } catch (final BlockStoreException x) {
-            // swallow
+        } catch (final BlockStoreException ignored) {
         }
         EventBus.getDefault().post(new BlockListUpdateEvent(blocks));
+    }
+
+    private void postSporkListEvent(SporkMessage spork) {
+        EventBus.getDefault().post(new SporkListUpdateEvent(spork));
     }
 
     @Override
