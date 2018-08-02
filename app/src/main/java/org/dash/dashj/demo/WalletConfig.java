@@ -1,6 +1,7 @@
 package org.dash.dashj.demo;
 
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 import org.bitcoinj.core.NetworkParameters;
@@ -18,15 +19,35 @@ public class WalletConfig {
 
     private static final String TAG = WalletConfig.class.getCanonicalName();
 
+    private String namingPrefix;
     private File walletFile;
     private File blockChainFile;
+    private File masternodeDataDir;
     private Wallet wallet;
     private NetworkParameters networkParameters;
 
-    public WalletConfig(Application application, String walletName, NetworkParameters networkParameters) {
-        walletFile = application.getFileStreamPath(walletName + Constants.WALLET_FILE_EXT);
-        blockChainFile = application.getFileStreamPath(walletName + Constants.BLOCKCHAIN_FILE_EXT);
+    public WalletConfig(Application application, String namingPrefix, NetworkParameters networkParameters) {
+        this.namingPrefix = namingPrefix;
+        walletFile = application.getFileStreamPath(namingPrefix + Constants.WALLET_FILE_EXT);
+        blockChainFile = application.getFileStreamPath(namingPrefix + Constants.BLOCKCHAIN_FILE_EXT);
+        masternodeDataDir = application.getDir(namingPrefix + Constants.MASTERNODE_DATA_DIR_EXT, Context.MODE_PRIVATE);
         this.networkParameters = networkParameters;
+    }
+
+    public String getWalletFilePath() {
+        return walletFile.getAbsolutePath();
+    }
+
+    public String getBlockChainFilePath() {
+        return blockChainFile.getAbsolutePath();
+    }
+
+    public String getMasternodeDataPath() {
+        return masternodeDataDir.getAbsolutePath();
+    }
+
+    public String getCheckpointsFilePath() {
+        return namingPrefix + Constants.CHECKPOINTS_FILE_EXT;
     }
 
     public File getWalletFile() {
@@ -39,6 +60,14 @@ public class WalletConfig {
 
     public boolean exists() {
         return walletFile.exists();
+    }
+
+    public File getMasternodeCacheFile() {
+        return new File(getMasternodeDataPath(), Constants.MASTERNODE_CACHE_FILE_NAME);
+    }
+
+    public File getGovernanceCacheFile() {
+        return new File(getMasternodeDataPath(), Constants.GOVERNANCE_CACHE_FILE_NAME);
     }
 
     public NetworkParameters getNetworkParameters() {

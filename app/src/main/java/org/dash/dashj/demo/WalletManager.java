@@ -93,17 +93,11 @@ public class WalletManager {
     }
 
     public String getCheckpointsFileName() {
-        switch (getNetworkParameters().getId()) {
-            case NetworkParameters.ID_MAINNET: {
-                return Constants.CHECKPOINTS_MAINNET_FILENAME;
-            }
-            case NetworkParameters.ID_TESTNET: {
-                return Constants.CHECKPOINTS_TESTNET_FILENAME;
-            }
-            default: {
-                return null;
-            }
-        }
+        return walletConfig.getCheckpointsFilePath();
+    }
+
+    public String getMasternodeDataPath() {
+        return walletConfig.getMasternodeDataPath();
     }
 
     private Wallet createWallet(WalletConfig walletConfig, ImmutableList<ChildNumber> bip44Path) {

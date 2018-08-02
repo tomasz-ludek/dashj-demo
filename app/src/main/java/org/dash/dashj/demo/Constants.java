@@ -10,11 +10,11 @@ public interface Constants {
 
     String WALLET_FILE_EXT = ".wallet";
     String BLOCKCHAIN_FILE_EXT = ".blockchain";
+    String CHECKPOINTS_FILE_EXT = ".checkpoints";
+    String MASTERNODE_DATA_DIR_EXT = ".masternode";
 
-    String CHECKPOINTS_MAINNET_FILENAME = "checkpoints-mainnet.txt";
-    String CHECKPOINTS_TESTNET_FILENAME = "checkpoints-testnet.txt";
-
-    String MASTERNODE_DIR = "masternode";
+    String MASTERNODE_CACHE_FILE_NAME= "mncache.dat";
+    String GOVERNANCE_CACHE_FILE_NAME= "goverance.dat";
 
     long EARLIEST_HD_SEED_CREATION_TIME = 1427610960L;
 

@@ -93,7 +93,7 @@ public class BlockchainSyncService extends JobService {
 
 
     private void doTheJob() {
-        WalletManager walletManager = WalletManager.getInstance();
+        final WalletManager walletManager = WalletManager.getInstance();
 
         if (!walletManager.isWalletReady()) {
             Log.d(TAG, "Wallet not yet initialized");
@@ -110,7 +110,7 @@ public class BlockchainSyncService extends JobService {
         }
 
         initBlockChain(wallet, walletManager.getCheckpointsFileName());
-        wallet.getContext().initDashSync(getDir(Constants.MASTERNODE_DIR, MODE_PRIVATE).getAbsolutePath());
+        wallet.getContext().initDashSync(walletManager.getMasternodeDataPath());
 
         initPeerGroup(wallet);
 
@@ -138,7 +138,7 @@ public class BlockchainSyncService extends JobService {
                     Log.d(TAG, "masternodeSync: " + wallet.getContext().masternodeManager);
                     Log.d(TAG, "masternodeSync6");
 
-                    FlatDB<MasternodeManager> mndb = new FlatDB<>(getDir(Constants.MASTERNODE_DIR, MODE_PRIVATE).getAbsolutePath(), "mncache.dat", "magicMasternodeCache");
+                    FlatDB<MasternodeManager> mndb = new FlatDB<>(walletManager.getMasternodeDataPath(), "mncache.dat", "magicMasternodeCache");
                     mndb.dump(Context.get().masternodeManager);
 
                     mndb.load(Context.get().masternodeManager);
