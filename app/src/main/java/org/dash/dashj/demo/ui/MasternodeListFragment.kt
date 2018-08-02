@@ -1,8 +1,6 @@
 package org.dash.dashj.demo.ui
 
 import android.arch.lifecycle.Observer
-import android.arch.lifecycle.ViewModelProviders
-import android.support.v7.widget.RecyclerView
 import org.dash.dashj.demo.R
 import org.dash.dashj.demo.WalletManager
 import org.dash.dashj.demo.event.MasternodeListRequestEvent
@@ -10,7 +8,7 @@ import org.dash.dashj.demo.ui.masternodelist.MasternodeListAdapter
 import org.dash.dashj.demo.ui.masternodelist.MasternodeListViewModel
 import org.greenrobot.eventbus.EventBus
 
-class MasternodeListFragment : BaseListFragment() {
+class MasternodeListFragment : BaseListFragment<MasternodeListAdapter, MasternodeListViewModel>() {
 
     override val emptyStateMessageResId: Int
         get() = R.string.default_empty_state_message
@@ -19,24 +17,21 @@ class MasternodeListFragment : BaseListFragment() {
         fun newInstance() = MasternodeListFragment()
     }
 
-    private lateinit var _adapter: MasternodeListAdapter
+    override fun viewModelType(): Class<MasternodeListViewModel> = MasternodeListViewModel::class.java
 
-    override val adapter: RecyclerView.Adapter<out RecyclerView.ViewHolder>
-        get() {
-            if (!this::_adapter.isInitialized) {
-                val masternodeManager = WalletManager.getInstance().wallet.context.masternodeManager
-                _adapter = MasternodeListAdapter(context!!, masternodeManager)
-            }
-            return _adapter
-        }
+    override fun createAdapter(): MasternodeListAdapter {
+        val masternodeManager = WalletManager.getInstance().wallet.context.masternodeManager
+        return MasternodeListAdapter(context!!, masternodeManager)
+    }
 
-    private lateinit var viewModel: MasternodeListViewModel
+    override fun onResume() {
+        super.onResume()
+        onRefresh()
+    }
 
-    override fun bindViewModel() {
-        viewModel = ViewModelProviders.of(this).get(MasternodeListViewModel::class.java)
-
+    override fun bindViewModel(viewModel: MasternodeListViewModel) {
         viewModel.sporkList.observe(this, Observer { masternodeList ->
-            _adapter.replace(masternodeList)
+            adapter.replace(masternodeList)
             updateView(masternodeList != null)
         })
     }

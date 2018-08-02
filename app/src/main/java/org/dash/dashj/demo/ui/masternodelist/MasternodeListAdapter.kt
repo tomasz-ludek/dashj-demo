@@ -41,11 +41,12 @@ class MasternodeListAdapter(context: Context, masternodeManager: MasternodeManag
     }
 
     override fun getItemId(position: Int): Long {
-        return masternodes[position].hash.toBigInteger().toLong()
+        val address = masternodes[position].info.address.toString()
+        return address.replace(".", "").replace(":", "").toLong()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MasternodeViewHolder {
-        val itemView = inflater.inflate(R.layout.spork_list_row, parent, false)
+        val itemView = inflater.inflate(R.layout.masternode_list_row, parent, false)
         return MasternodeViewHolder(itemView)
     }
 

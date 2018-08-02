@@ -1,4 +1,4 @@
-package org.dash.dashj.demo.ui.adapter;
+package org.dash.dashj.demo.ui.blocklist;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -13,7 +13,6 @@ import org.bitcoinj.core.Transaction;
 import org.bitcoinj.utils.MonetaryFormat;
 import org.bitcoinj.wallet.Wallet;
 import org.dash.dashj.demo.R;
-import org.dash.dashj.demo.ui.adapter.holder.BlockViewHolder;
 
 import java.util.ArrayList;
 import java.util.Collection;

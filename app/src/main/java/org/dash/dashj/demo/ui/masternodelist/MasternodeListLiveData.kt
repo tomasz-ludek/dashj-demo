@@ -26,7 +26,7 @@ class MasternodeListLiveData : MutableLiveData<List<Masternode>>() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    fun onMasternodeListUpdateEvent(event: MasternodeListUpdateEvent) {
+    fun onMasternodeListUpdateEvent(event: MasternodeListRequestEvent) {
         value = masternodeManager.masternodes
     }
 }

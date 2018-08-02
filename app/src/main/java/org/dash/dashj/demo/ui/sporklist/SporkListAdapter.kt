@@ -1,4 +1,4 @@
-package org.dash.dashj.demo.ui.adapter
+package org.dash.dashj.demo.ui.sporklist
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import org.bitcoinj.core.SporkManager
 import org.bitcoinj.core.SporkMessage
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.ui.adapter.holder.SporkViewHolder
 
 class SporkListAdapter(context: Context, sporkManager: SporkManager) : RecyclerView.Adapter<SporkViewHolder>() {
 

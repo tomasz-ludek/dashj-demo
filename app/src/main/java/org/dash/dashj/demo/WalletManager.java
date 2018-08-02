@@ -65,7 +65,8 @@ public class WalletManager {
         walletConfigSet.add(testnetWallet);
         walletConfigSet.add(testnetSeedWallet);
 
-        walletConfig = testnetSeedWallet;
+        walletConfig = mainnetWallet;
+//        walletConfig = testnetSeedWallet;
         walletConfig.loadWallet();
 
         org.bitcoinj.core.Context.propagate(walletConfig.getWallet().getContext());

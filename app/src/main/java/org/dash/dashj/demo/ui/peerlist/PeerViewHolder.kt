@@ -1,4 +1,4 @@
-package org.dash.dashj.demo.ui.adapter.holder
+package org.dash.dashj.demo.ui.peerlist
 
 import android.support.v7.widget.RecyclerView
 import android.view.View

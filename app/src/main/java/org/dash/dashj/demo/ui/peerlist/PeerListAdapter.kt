@@ -1,4 +1,4 @@
-package org.dash.dashj.demo.ui.adapter
+package org.dash.dashj.demo.ui.peerlist
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import org.bitcoinj.core.Peer
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.ui.adapter.holder.PeerViewHolder
 import java.net.InetAddress
 import java.util.*
 
