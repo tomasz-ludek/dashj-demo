@@ -3,6 +3,7 @@ package org.dash.dashj.demo
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
+import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -10,7 +11,17 @@ import android.view.Menu
 import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
+import org.dash.dashj.demo.ui.blocklist.BlockListFragment
+import org.dash.dashj.demo.ui.masternodelist.MasternodeListFragment
 import org.dash.dashj.demo.ui.peerlist.PeerListFragment
+import org.dash.dashj.demo.ui.sporklist.SporkListFragment
+import android.content.Intent
+import android.app.PendingIntent
+import android.app.AlarmManager
+import android.content.Context
+import android.content.Context.ALARM_SERVICE
+import android.preference.PreferenceManager
+
 
 class Main2Activity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -25,18 +36,18 @@ class Main2Activity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
                     .commitNow()
         }
 
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
+//        fab.setOnClickListener { view ->
+//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                    .setAction("Action", null).show()
+//        }
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
+        nav_view.setCheckedItem(R.id.nav_peers)
         nav_view.setNavigationItemSelectedListener(this)
-        nav_view.setCheckedItem(R.id.nav_wallet_mainnet)
     }
 
     override fun onBackPressed() {
@@ -65,26 +76,46 @@ class Main2Activity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_wallet_mainnet -> {
-
+                stopService(Intent(this, BlockchainSyncService::class.java))
+                val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+                val edit = preferences.edit()
+                edit.putBoolean("testnetmode", false)
+                edit.commit()
+                val mgr = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, PendingIntent.getActivity(this.baseContext, 0, Intent(intent), intent.flags))
+                android.os.Process.killProcess(android.os.Process.myPid())
             }
             R.id.nav_wallet_testnet -> {
-
+                stopService(Intent(this, BlockchainSyncService::class.java))
+                val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+                val edit = preferences.edit()
+                edit.putBoolean("testnetmode", true)
+                edit.commit()
+                val mgr = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, PendingIntent.getActivity(this.baseContext, 0, Intent(intent), intent.flags))
+                android.os.Process.killProcess(android.os.Process.myPid())
             }
             R.id.nav_peers -> {
-
+                switchFragment(PeerListFragment.newInstance())
             }
             R.id.nav_blocks -> {
-
+                switchFragment(BlockListFragment.newInstance())
             }
             R.id.nav_sporks -> {
-
+                switchFragment(SporkListFragment.newInstance())
             }
             R.id.nav_masternodes -> {
-
+                switchFragment(MasternodeListFragment.newInstance())
             }
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private fun switchFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+                .replace(R.id.content, fragment)
+                .commitNow()
     }
 }

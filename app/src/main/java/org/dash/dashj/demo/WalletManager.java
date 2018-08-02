@@ -1,5 +1,7 @@
 package org.dash.dashj.demo;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.common.collect.ImmutableList;
@@ -65,7 +67,13 @@ public class WalletManager {
         walletConfigSet.add(testnetWallet);
         walletConfigSet.add(testnetSeedWallet);
 
-        walletConfig = mainnetWallet;
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(application.getApplicationContext());
+        boolean testnetmode = preferences.getBoolean("testnetmode", false);
+        if (testnetmode) {
+            walletConfig = testnetWallet;
+        } else {
+            walletConfig = mainnetWallet;
+        }
 //        walletConfig = testnetSeedWallet;
         walletConfig.loadWallet();
 

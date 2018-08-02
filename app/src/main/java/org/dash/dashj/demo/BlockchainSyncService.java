@@ -2,12 +2,11 @@ package org.dash.dashj.demo;
 
 import android.app.job.JobParameters;
 import android.app.job.JobService;
+import android.content.Intent;
 import android.util.Log;
 
 import org.bitcoinj.core.BlockChain;
 import org.bitcoinj.core.CheckpointManager;
-import org.bitcoinj.core.Context;
-import org.bitcoinj.core.MasternodeManager;
 import org.bitcoinj.core.MasternodeSync;
 import org.bitcoinj.core.MasternodeSyncListener;
 import org.bitcoinj.core.NetworkParameters;
@@ -24,7 +23,6 @@ import org.bitcoinj.net.discovery.PeerDiscovery;
 import org.bitcoinj.net.discovery.PeerDiscoveryException;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.BlockStoreException;
-import org.bitcoinj.store.FlatDB;
 import org.bitcoinj.store.SPVBlockStore;
 import org.bitcoinj.wallet.Wallet;
 import org.dash.dashj.demo.event.BlockListRequestEvent;
@@ -35,6 +33,7 @@ import org.dash.dashj.demo.event.PeerListRequestEvent;
 import org.dash.dashj.demo.event.PeerListUpdateEvent;
 import org.dash.dashj.demo.event.SporkListRequestEvent;
 import org.dash.dashj.demo.event.SporkListUpdateEvent;
+import org.dash.dashj.demo.event.SyncUpdateEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -91,6 +90,11 @@ public class BlockchainSyncService extends JobService {
         return false;
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        doTheJob();
+        return START_STICKY;
+    }
 
     private void doTheJob() {
         final WalletManager walletManager = WalletManager.getInstance();
@@ -126,6 +130,7 @@ public class BlockchainSyncService extends JobService {
             public void onSyncStatusChanged(int newStatus, double syncStatus) {
                 postMasternodeListEvent(newStatus);
                 if (newStatus == MasternodeSync.MASTERNODE_SYNC_FINISHED) {
+                    /*
                     Log.d(TAG, "masternodeSync1");
                     try {
                         Log.d(TAG, "masternodeSync2");
@@ -142,7 +147,8 @@ public class BlockchainSyncService extends JobService {
                     mndb.dump(Context.get().masternodeManager);
 
                     mndb.load(Context.get().masternodeManager);
-//
+                    */
+
 //                if(control == null) {
 //                    control = new MasternodeControl(Context.get(), "masternode.conf");
 //                    control.load();
@@ -231,6 +237,7 @@ public class BlockchainSyncService extends JobService {
                 @Override
                 protected void progress(double pct, int blocksSoFar, Date date) {
                     Log.d(TAG, String.format(Locale.US, "Chain download %d%% done with %d blocks to go, block date %s", (int) pct, blocksSoFar, Utils.dateTimeFormat(date)));
+                    EventBus.getDefault().postSticky(new SyncUpdateEvent(pct, blocksSoFar, date));
                     postBlockListEvent();
                 }
             });
@@ -311,5 +318,15 @@ public class BlockchainSyncService extends JobService {
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+
+        if (peerGroup != null) {
+            Log.d(TAG, "Stopping peergroup");
+            WalletManager walletManager = WalletManager.getInstance();
+            peerGroup.removeDisconnectedEventListener(peerDisconnectedEventListener);
+            peerGroup.removeConnectedEventListener(peerConnectedEventListener);
+            peerGroup.removeWallet(walletManager.getWallet());
+            peerGroup.stopAsync();
+            peerGroup = null;
+        }
     }
 }
