@@ -24,7 +24,6 @@ class PeerViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Layout
         heightView.text = if (bestHeight > 0) getString(R.string.peer_list_row_blocks, bestHeight) else null
         versionView.text = versionMessage.subVer
         protocolView.text = getString(R.string.peer_list_row_protocol, versionMessage.clientVersion)
-        masternodeCountView.text = peer.masternodeListCount.toString()
         val pingTime = peer.pingTime
         pingView.text = if (pingTime < java.lang.Long.MAX_VALUE) getString(R.string.peer_list_row_ping_time, pingTime) else null
     }

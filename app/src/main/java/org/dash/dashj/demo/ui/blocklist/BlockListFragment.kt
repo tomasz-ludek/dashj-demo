@@ -21,6 +21,11 @@ class BlockListFragment : BaseListFragment<BlockListAdapter, BlockListViewModel>
         return BlockListAdapter(activity, WalletManager.getInstance().wallet, null)
     }
 
+    override fun initView() {
+        super.initView()
+        activity!!.setTitle(R.string.fragment_block_list_title)
+    }
+
     override fun bindViewModel(viewModel: BlockListViewModel) {
         viewModel.blockList.observe(this, Observer { blockList ->
             adapter.replace(blockList)

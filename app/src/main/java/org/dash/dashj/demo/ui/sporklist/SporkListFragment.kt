@@ -23,6 +23,11 @@ class SporkListFragment : BaseListFragment<SporkListAdapter, SporkListViewModel>
         return SporkListAdapter(context!!, sporkManager)
     }
 
+    override fun initView() {
+        super.initView()
+        activity!!.setTitle(R.string.fragment_spork_list_title)
+    }
+
     override fun bindViewModel(viewModel: SporkListViewModel) {
         viewModel.sporkList.observe(this, Observer { sporkList ->
             adapter.replace(sporkList)

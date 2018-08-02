@@ -1,6 +1,11 @@
 <resources>
     <string name="app_name">DashJ Demo</string>
 
+    <string name="fragment_peer_list_title">Peers</string>
+    <string name="fragment_block_list_title">Blocks</string>
+    <string name="fragment_spork_list_title">Sporks</string>
+    <string name="fragment_masternode_list_title">Masternode</string>
+
     <string name="fragment_peer_list_empty">No peers connected</string>
     <string name="peer_list_row_host_name_unknown">unknown</string>
     <string name="peer_list_row_ping_time">⇆ %d&#x2009;ms</string>
@@ -16,4 +21,12 @@
     <string name="symbol_internal">⇄</string>
 
     <string name="default_empty_state_message">Synchronizing…</string>
+
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">DashJ Demo</string>
+    <string name="nav_header_subtitle">dash.org/dashj</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
 </resources>

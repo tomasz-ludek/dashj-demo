@@ -2,10 +2,7 @@ package org.dash.dashj.demo
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import org.dash.dashj.demo.ui.MasternodeListFragment
-import org.dash.dashj.demo.ui.blocklist.BlockListFragment
-import org.dash.dashj.demo.ui.peerlist.PeerListFragment
-import org.dash.dashj.demo.ui.sporklist.SporkListFragment
+import org.dash.dashj.demo.ui.masternodelist.MasternodeListFragment
 
 class MainActivity : AppCompatActivity() {
 

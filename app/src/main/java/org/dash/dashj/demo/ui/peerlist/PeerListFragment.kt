@@ -21,6 +21,11 @@ class PeerListFragment : BaseListFragment<PeerListAdapter, PeerListViewModel>() 
         return PeerListAdapter(context!!)
     }
 
+    override fun initView() {
+        super.initView()
+        activity!!.setTitle(R.string.fragment_peer_list_title)
+    }
+
     override fun bindViewModel(viewModel: PeerListViewModel) {
         viewModel.peerList.observe(this, Observer { peerList ->
             adapter.replace(peerList)

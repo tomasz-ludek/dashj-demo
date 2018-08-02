@@ -64,6 +64,7 @@ abstract class BaseListFragment<T : RecyclerView.Adapter<out RecyclerView.ViewHo
     }
 
     protected fun updateView(showReadyState: Boolean) {
+        layoutView.refreshView.isRefreshing = false
         layoutView.rootAnimatorView.displayedChild =
                 if (showReadyState) READY_STATE_VIEW else EMPTY_STATE_VIEW
     }

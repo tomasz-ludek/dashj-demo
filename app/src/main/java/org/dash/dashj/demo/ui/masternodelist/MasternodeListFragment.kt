@@ -1,11 +1,10 @@
-package org.dash.dashj.demo.ui
+package org.dash.dashj.demo.ui.masternodelist
 
 import android.arch.lifecycle.Observer
 import org.dash.dashj.demo.R
 import org.dash.dashj.demo.WalletManager
 import org.dash.dashj.demo.event.MasternodeListRequestEvent
-import org.dash.dashj.demo.ui.masternodelist.MasternodeListAdapter
-import org.dash.dashj.demo.ui.masternodelist.MasternodeListViewModel
+import org.dash.dashj.demo.ui.BaseListFragment
 import org.greenrobot.eventbus.EventBus
 
 class MasternodeListFragment : BaseListFragment<MasternodeListAdapter, MasternodeListViewModel>() {
@@ -27,6 +26,11 @@ class MasternodeListFragment : BaseListFragment<MasternodeListAdapter, Masternod
     override fun onResume() {
         super.onResume()
         onRefresh()
+    }
+
+    override fun initView() {
+        super.initView()
+        activity!!.setTitle(R.string.fragment_masternode_list_title)
     }
 
     override fun bindViewModel(viewModel: MasternodeListViewModel) {
