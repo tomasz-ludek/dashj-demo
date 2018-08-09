@@ -4,6 +4,8 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.common.base.Stopwatch;
+
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.wallet.UnreadableWalletException;
 import org.bitcoinj.wallet.Wallet;
@@ -83,6 +85,7 @@ public class WalletConfig {
             FileInputStream walletStream = null;
             try {
                 walletStream = new FileInputStream(walletFile);
+                org.bitcoinj.core.Context.propagate(new org.bitcoinj.core.Context(networkParameters));
                 wallet = new WalletProtobufSerializer().readWallet(walletStream);
 
                 if (!wallet.getParams().equals(networkParameters)) {
@@ -90,7 +93,12 @@ public class WalletConfig {
                 }
             } catch (final FileNotFoundException | UnreadableWalletException x) {
                 Log.e(TAG, "Problem loading wallet", x);
-                throw new RuntimeException(x);
+//                KeyChainGroup keyChainGroup = new KeyChainGroup(networkParameters);
+//                wallet = new Wallet(networkParameters, keyChainGroup);
+////                public static final ImmutableList<ChildNumber> BIP44_PATH = TEST ? DeterministicKeyChain.BIP44_ACCOUNT_ZERO_PATH_TESTNET : DeterministicKeyChain.BIP44_ACCOUNT_ZERO_PATH;
+//                wallet.addKeyChain(DeterministicKeyChain.BIP44_ACCOUNT_ZERO_PATH);
+//                Log.e(TAG, "wallet.toString(): " + wallet.toString(true, true, true, null));
+                throw new RuntimeException(String.format("Wallet %s is not consistent", walletFile));
             } finally {
                 closeSilently(walletStream);
             }
@@ -108,10 +116,16 @@ public class WalletConfig {
     }
 
     public void create(Wallet wallet) {
+        this.wallet = wallet;
+        saveWallet();
+    }
+
+    public void saveWallet() {
         try {
-            this.wallet = wallet;
+            final Stopwatch watch = Stopwatch.createStarted();
             wallet.saveToFile(walletFile);
-            Log.d(TAG, wallet.toString());
+            watch.stop();
+            Log.i(TAG, String.format("Wallet saved to: '%s', took %s", walletFile, watch));
         } catch (final IOException x) {
             throw new RuntimeException(x);
         }

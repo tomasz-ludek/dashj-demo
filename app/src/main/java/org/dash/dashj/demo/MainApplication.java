@@ -24,8 +24,9 @@ public class MainApplication extends Application {
         Threading.throwOnLockCycles();
         org.bitcoinj.core.Context.enableStrictMode();
 
-        WalletManager.initialize(this);
-        scheduleBlockchainSync();
+        MainPreferences preferences = new MainPreferences(this);
+        WalletManager.initialize(this, preferences.getLatestConfigName());
+//        scheduleBlockchainSync();
     }
 
     private void scheduleBlockchainSync() {

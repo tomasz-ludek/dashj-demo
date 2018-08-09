@@ -1,7 +1,6 @@
 package org.dash.dashj.demo;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.common.collect.ImmutableList;
@@ -18,23 +17,23 @@ import org.bitcoinj.wallet.Wallet;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class WalletManager {
 
     private static WalletManager instance;
 
-    private Set<WalletConfig> walletConfigSet;
+    private Map<String, WalletConfig> walletConfigMap;
 
     private WalletConfig walletConfig;
 
-    public static void initialize(MainApplication application) {
+    public static void initialize(MainApplication application, String walletName) {
         if (instance != null) {
             throw new IllegalStateException("WalletManager was already initialized");
         }
-        instance = new WalletManager(application);
+        instance = new WalletManager(application, walletName);
     }
 
     public static WalletManager getInstance() {
@@ -44,44 +43,65 @@ public class WalletManager {
         return instance;
     }
 
-    private WalletManager(MainApplication application) {
-        walletConfigSet = new HashSet<>();
+    private WalletManager(MainApplication application, String walletName) {
+        walletConfigMap = new LinkedHashMap<>();
         WalletConfig mainnetWallet = new WalletConfig(application, Constants.WALLET_MAINNET_NAME, MainNetParams.get());
         if (!mainnetWallet.exists()) {
             Wallet wallet = createWallet(mainnetWallet, DeterministicKeyChain.BIP44_ACCOUNT_ZERO_PATH);
             mainnetWallet.create(wallet);
         }
+        walletConfigMap.put(Constants.WALLET_MAINNET_NAME, mainnetWallet);
         WalletConfig testnetWallet = new WalletConfig(application, Constants.WALLET_TESTNET3_NAME, TestNet3Params.get());
         if (!testnetWallet.exists()) {
             Wallet wallet = createWallet(testnetWallet, DeterministicKeyChain.BIP44_ACCOUNT_ZERO_PATH_TESTNET);
             testnetWallet.create(wallet);
         }
+        walletConfigMap.put(Constants.WALLET_TESTNET3_NAME, testnetWallet);
         WalletConfig testnetSeedWallet = new WalletConfig(application, Constants.WALLET_SEED_TESTNET3_NAME, TestNet3Params.get());
         if (!testnetSeedWallet.exists()) {
             String[] dummySeed = new String[]{"erode", "bridge", "organ", "you", "often", "teach", "desert", "thrive", "spike", "pottery", "sight", "sport"};
             Wallet wallet = createWallet(testnetSeedWallet, Arrays.asList(dummySeed));
             testnetSeedWallet.create(wallet);
         }
+        walletConfigMap.put(Constants.WALLET_SEED_TESTNET3_NAME, testnetSeedWallet);
 
-        walletConfigSet.add(mainnetWallet);
-        walletConfigSet.add(testnetWallet);
-        walletConfigSet.add(testnetSeedWallet);
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(application.getApplicationContext());
-        boolean testnetmode = preferences.getBoolean("testnetmode", false);
-        if (testnetmode) {
-            walletConfig = testnetWallet;
-        } else {
-            walletConfig = mainnetWallet;
-        }
-//        walletConfig = testnetSeedWallet;
-        walletConfig.loadWallet();
-
-        org.bitcoinj.core.Context.propagate(walletConfig.getWallet().getContext());
-        walletConfig.getWallet().getContext().initDash(false, true);
-
+        setActiveWallet(walletName, application);
         Log.d("FreshReceiveAddress", walletConfig.getWallet().freshReceiveAddress().toBase58());
         Log.d("FreshReceiveAddress", walletConfig.getWallet().toString(true, true, true, null));
+    }
+
+    public void setActiveWallet(String walletName, android.content.Context context) {
+        if (walletConfigMap.containsKey(walletName)) {
+            WalletConfig walletConfig = walletConfigMap.get(walletName);
+            setActiveWallet(walletConfig, context);
+        } else {
+            throw new IllegalArgumentException("Unknown wallet " + walletName);
+        }
+    }
+
+    private void setActiveWallet(WalletConfig newWalletConfig, android.content.Context context) {
+        Intent blockchainSyncServiceIntent = new Intent(context, BlockchainSyncService.class);
+        if (walletConfig != null) {
+            walletConfig.saveWallet();
+//            Wallet wallet = walletConfig.getWallet();
+//            wallet.removeChangeEventListener(walletEventListener);
+//            wallet.removeCoinsSentEventListener(walletEventListener);
+//            wallet.removeCoinsReceivedEventListener(walletEventListener);
+            context.stopService(blockchainSyncServiceIntent);
+        }
+        walletConfig = newWalletConfig;
+        Wallet wallet = walletConfig.getWallet();
+        if (wallet != null) {
+            org.bitcoinj.core.Context.propagate(wallet.getContext());
+        } else {
+            walletConfig.loadWallet();
+            wallet = walletConfig.getWallet();
+        }
+//        wallet.addChangeEventListener(walletEventListener);
+//        wallet.addCoinsSentEventListener(walletEventListener);
+//        wallet.addCoinsReceivedEventListener(walletEventListener);
+        wallet.getContext().initDash(false, true);
+        context.startService(blockchainSyncServiceIntent);
     }
 
     public boolean isWalletReady() {
@@ -90,6 +110,10 @@ public class WalletManager {
 
     public Wallet getWallet() {
         return walletConfig.getWallet();
+    }
+
+    public void saveWallet() {
+        walletConfig.saveWallet();
     }
 
     public File getBlockChainFile() {

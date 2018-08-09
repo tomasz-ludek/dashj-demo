@@ -1,8 +1,9 @@
 package org.dash.dashj.demo;
 
-import android.app.job.JobParameters;
-import android.app.job.JobService;
+import android.app.Service;
 import android.content.Intent;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.bitcoinj.core.BlockChain;
@@ -49,7 +50,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class BlockchainSyncService extends JobService {
+public class BlockchainSyncService extends Service {
 
     private static final String TAG = BlockchainSyncService.class.getCanonicalName();
 
@@ -63,48 +64,24 @@ public class BlockchainSyncService extends JobService {
     @Override
     public void onCreate() {
         super.onCreate();
+        walletManager = WalletManager.getInstance();
         EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public boolean onStartJob(JobParameters jobParameters) {
-        Log.d(TAG, "onStartJob(" + jobParameters + ")");
-        doTheJob();
-        return true;
-    }
-
-    @Override
-    public boolean onStopJob(JobParameters jobParameters) {
-        Log.d(TAG, "onStopJob(" + jobParameters + ")");
-
-//        if (peerGroup != null) {
-//            Log.d(TAG, "Stopping peergroup");
-//            WalletManager walletManager = WalletManager.getInstance();
-//            peerGroup.removeDisconnectedEventListener(peerDisconnectedEventListener);
-//            peerGroup.removeConnectedEventListener(peerConnectedEventListener);
-//            peerGroup.removeWallet(walletManager.getWallet());
-//            peerGroup.stopAsync();
-//            peerGroup = null;
-//        }
-
-        return false;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         doTheJob();
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     private void doTheJob() {
-        final WalletManager walletManager = WalletManager.getInstance();
 
         if (!walletManager.isWalletReady()) {
             Log.d(TAG, "Wallet not yet initialized");
+            stopSelf();
             return;
         }
 
-        NetworkParameters networkParameters = walletManager.getNetworkParameters();
         blockChainFile = walletManager.getBlockChainFile();
         final Wallet wallet = walletManager.getWallet();
 
@@ -161,8 +138,9 @@ public class BlockchainSyncService extends JobService {
     }
 
     private void initBlockChain(Wallet wallet, String checkpointAssetPath) {
+        NetworkParameters networkParameters = wallet.getNetworkParameters();
         try {
-            blockStore = new SPVBlockStore(wallet.getNetworkParameters(), blockChainFile);
+            blockStore = new SPVBlockStore(networkParameters, blockChainFile);
             blockStore.getChainHead(); // detect corruptions as early as possible
 
             final long earliestKeyCreationTime = wallet.getEarliestKeyCreationTime();
@@ -170,7 +148,7 @@ public class BlockchainSyncService extends JobService {
             if (!blockChainFile.exists() && earliestKeyCreationTime > 0) {
                 try {
                     final InputStream checkpointsInputStream = getAssets().open(checkpointAssetPath);
-                    CheckpointManager.checkpoint(wallet.getNetworkParameters(), checkpointsInputStream, blockStore, earliestKeyCreationTime);
+                    CheckpointManager.checkpoint(networkParameters, checkpointsInputStream, blockStore, earliestKeyCreationTime);
                 } catch (final IOException x) {
                     Log.w(TAG, "Problem reading checkpoints, continuing without", x);
                 }
@@ -182,7 +160,7 @@ public class BlockchainSyncService extends JobService {
         }
 
         try {
-            blockChain = new BlockChain(wallet.getNetworkParameters(), wallet, blockStore);
+            blockChain = new BlockChain(networkParameters, wallet, blockStore);
         } catch (final BlockStoreException x) {
             throw new RuntimeException("Blockchain cannot be created", x);
         }
@@ -319,14 +297,32 @@ public class BlockchainSyncService extends JobService {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
 
+        Wallet wallet = walletManager.getWallet();
+//        wallet.removeChangeEventListener(walletEventListener);
+//        wallet.removeCoinsSentEventListener(walletEventListener);
+//        wallet.removeCoinsReceivedEventListener(walletEventListener);
+
         if (peerGroup != null) {
             Log.d(TAG, "Stopping peergroup");
-            WalletManager walletManager = WalletManager.getInstance();
             peerGroup.removeDisconnectedEventListener(peerDisconnectedEventListener);
             peerGroup.removeConnectedEventListener(peerConnectedEventListener);
-            peerGroup.removeWallet(walletManager.getWallet());
+            peerGroup.removeWallet(wallet);
             peerGroup.stopAsync();
             peerGroup = null;
         }
+
+        try {
+            blockStore.close();
+        } catch (final BlockStoreException x) {
+            throw new RuntimeException(x);
+        }
+
+        walletManager.saveWallet();
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 }
