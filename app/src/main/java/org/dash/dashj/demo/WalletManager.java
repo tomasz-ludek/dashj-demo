@@ -92,7 +92,7 @@ public class WalletManager {
         walletConfig = newWalletConfig;
         Wallet wallet = walletConfig.getWallet();
         if (wallet != null) {
-            org.bitcoinj.core.Context.propagate(wallet.getContext());
+            propagateContext();
         } else {
             walletConfig.loadWallet();
             wallet = walletConfig.getWallet();
@@ -106,6 +106,10 @@ public class WalletManager {
 
     public boolean isWalletReady() {
         return walletConfig.getWallet() != null;
+    }
+
+    public void propagateContext() {
+        org.bitcoinj.core.Context.propagate(getWallet().getContext());
     }
 
     public Wallet getWallet() {
