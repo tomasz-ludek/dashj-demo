@@ -14,6 +14,8 @@ import org.bitcoinj.wallet.DeterministicKeyChain;
 import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.KeyChainGroup;
 import org.bitcoinj.wallet.Wallet;
+import org.dash.dashj.demo.event.WalletReloadEvent;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.Arrays;
@@ -102,6 +104,8 @@ public class WalletManager {
 //        wallet.addCoinsReceivedEventListener(walletEventListener);
         wallet.getContext().initDash(false, true);
         context.startService(blockchainSyncServiceIntent);
+
+        EventBus.getDefault().post(new WalletReloadEvent());
     }
 
     public boolean isWalletReady() {
@@ -134,6 +138,10 @@ public class WalletManager {
 
     public String getMasternodeDataPath() {
         return walletConfig.getMasternodeDataPath();
+    }
+
+    public String getConfigName() {
+        return walletConfig.getNamingPrefix();
     }
 
     private Wallet createWallet(WalletConfig walletConfig, ImmutableList<ChildNumber> bip44Path) {

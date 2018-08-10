@@ -72,6 +72,10 @@ public class WalletConfig {
         return new File(getMasternodeDataPath(), Constants.GOVERNANCE_CACHE_FILE_NAME);
     }
 
+    public String getNamingPrefix() {
+        return namingPrefix;
+    }
+
     public NetworkParameters getNetworkParameters() {
         return networkParameters;
     }

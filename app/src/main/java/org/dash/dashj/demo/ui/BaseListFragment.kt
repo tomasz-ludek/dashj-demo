@@ -13,8 +13,14 @@ import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.base_list_fragment.*
 import kotlinx.android.synthetic.main.base_list_fragment.view.*
+import org.dash.dashj.demo.Main2Activity
 import org.dash.dashj.demo.R
 import org.dash.dashj.demo.Utils
+import org.dash.dashj.demo.WalletManager
+import org.dash.dashj.demo.event.WalletReloadEvent
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 abstract class BaseListFragment<T : RecyclerView.Adapter<out RecyclerView.ViewHolder>, V : ViewModel> : Fragment() {
 
@@ -48,6 +54,7 @@ abstract class BaseListFragment<T : RecyclerView.Adapter<out RecyclerView.ViewHo
     }
 
     protected open fun initView() {
+        (activity as Main2Activity).setSubTitle(WalletManager.getInstance().configName)
         layoutView.recyclerView.layoutManager = LinearLayoutManager(context)
         layoutView.recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         this.adapter = createAdapter()
@@ -88,5 +95,20 @@ abstract class BaseListFragment<T : RecyclerView.Adapter<out RecyclerView.ViewHo
         layoutView.refreshView.isRefreshing = false
         layoutView.rootAnimatorView.displayedChild =
                 if (showReadyState) READY_STATE_VIEW else EMPTY_STATE_VIEW
+    }
+
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
+    fun onWalletReloadEvent(event: WalletReloadEvent) {
+
     }
 }

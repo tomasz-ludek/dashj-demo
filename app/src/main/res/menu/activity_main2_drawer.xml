@@ -1,48 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText"
     tools:showIn="navigation_view">
 
-    <item android:title="Wallets">
-        <menu>
-            <group android:checkableBehavior="single">
-                <item
-                    android:id="@+id/nav_wallet_mainnet"
-                    android:icon="@drawable/ic_menu_send"
-                    android:title="Mainnet" />
-                <item
-                    android:id="@+id/nav_wallet_testnet"
-                    android:icon="@drawable/ic_menu_send"
-                    android:title="Testnet" />
-            </group>
-        </menu>
-    </item>
-
-    <item android:title="Features">
-        <menu>
-            <group android:checkableBehavior="single">
-                <item
-                    android:id="@+id/nav_peers"
-                    android:icon="@drawable/ic_menu_send"
-                    android:title="Peers" />
-                <item
-                    android:id="@+id/nav_blocks"
-                    android:icon="@drawable/ic_menu_send"
-                    android:title="Blocks" />
-                <item
-                    android:id="@+id/nav_sporks"
-                    android:icon="@drawable/ic_menu_send"
-                    android:title="Sporks" />
-                <item
-                    android:id="@+id/nav_masternodes"
-                    android:icon="@drawable/ic_menu_send"
-                    android:title="Masternodes" />
-                <item
-                    android:id="@+id/nav_governance"
-                    android:icon="@drawable/ic_menu_send"
-                    android:title="Governance" />
-            </group>
-        </menu>
-    </item>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_peers"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Peers" />
+        <item
+            android:id="@+id/nav_blocks"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Blocks" />
+        <item
+            android:id="@+id/nav_sporks"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Sporks" />
+        <item
+            android:id="@+id/nav_masternodes"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Masternodes" />
+        <item
+            android:id="@+id/nav_governance"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Governance" />
+    </group>
 
 </menu>

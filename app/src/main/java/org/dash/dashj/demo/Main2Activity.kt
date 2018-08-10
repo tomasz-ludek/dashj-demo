@@ -1,11 +1,6 @@
 package org.dash.dashj.demo
 
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
@@ -13,6 +8,8 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
 import org.dash.dashj.demo.ui.blocklist.BlockListFragment
@@ -21,8 +18,9 @@ import org.dash.dashj.demo.ui.masternodelist.MasternodeListFragment
 import org.dash.dashj.demo.ui.peerlist.PeerListFragment
 import org.dash.dashj.demo.ui.sporklist.SporkListFragment
 
-
 class Main2Activity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+
+    private lateinit var headerView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,13 +38,64 @@ class Main2Activity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 //                    .setAction("Action", null).show()
 //        }
 
-        val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        initDrawer()
+    }
+
+    private fun initDrawer() {
+        headerView = nav_view.getHeaderView(0)
+        val toggle = object : ActionBarDrawerToggle(
+                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            override fun onDrawerClosed(drawerView: View) {
+                super.onDrawerClosed(drawerView)
+                expandWalletsView(false)
+            }
+        }
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
         nav_view.setCheckedItem(R.id.nav_peers)
         nav_view.setNavigationItemSelectedListener(this)
+
+        headerView.findViewById<View>(R.id.mainnetActionView).setOnClickListener {
+            switchWallet(Constants.WALLET_MAINNET_NAME)
+        }
+
+        headerView.findViewById<View>(R.id.testnetActionView).setOnClickListener {
+            switchWallet(Constants.WALLET_TESTNET3_NAME)
+        }
+
+        headerView.findViewById<View>(R.id.showWalletsView).setOnClickListener {
+            val walletsListView = headerView.findViewById<View>(R.id.walletsListView)
+            expandWalletsView(walletsListView.visibility == View.GONE)
+        }
+
+        headerView.findViewById<TextView>(R.id.activeWalletView).text = WalletManager.getInstance().configName
+    }
+
+    private fun expandWalletsView(expand: Boolean) {
+        val headerView = nav_view.getHeaderView(0)
+        val walletsListView = headerView.findViewById<View>(R.id.walletsListView)
+        val expandIconView = headerView.findViewById<View>(R.id.expandIconView)
+        if (expand) {
+            walletsListView.visibility = View.VISIBLE
+            expandIconView.rotation = 180.0f
+        } else {
+            walletsListView.visibility = View.GONE
+            expandIconView.rotation = 0.0f
+        }
+    }
+
+    private fun switchWallet(walletName: String) {
+        val preferences = MainPreferences(this)
+        preferences.latestConfigName = walletName
+        WalletManager.getInstance().setActiveWallet(walletName, this)
+        switchFragment(PeerListFragment.newInstance())
+        drawer_layout.closeDrawers()
+        headerView.findViewById<TextView>(R.id.activeWalletView).text = walletName
+    }
+
+    fun setSubTitle(title: CharSequence?) {
+        toolbar.subtitle = title
     }
 
     override fun onBackPressed() {
@@ -74,26 +123,6 @@ class Main2Activity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.nav_wallet_mainnet -> {
-                stopService(Intent(this, BlockchainSyncService::class.java))
-                val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-                val edit = preferences.edit()
-                edit.putBoolean("testnetmode", false)
-                edit.commit()
-                val mgr = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, PendingIntent.getActivity(this.baseContext, 0, Intent(intent), intent.flags))
-                android.os.Process.killProcess(android.os.Process.myPid())
-            }
-            R.id.nav_wallet_testnet -> {
-                stopService(Intent(this, BlockchainSyncService::class.java))
-                val preferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-                val edit = preferences.edit()
-                edit.putBoolean("testnetmode", true)
-                edit.commit()
-                val mgr = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-                mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 1000, PendingIntent.getActivity(this.baseContext, 0, Intent(intent), intent.flags))
-                android.os.Process.killProcess(android.os.Process.myPid())
-            }
             R.id.nav_peers -> {
                 switchFragment(PeerListFragment.newInstance())
             }
