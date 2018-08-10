@@ -10,11 +10,14 @@ import android.view.View
 import android.widget.Filterable
 import org.dash.dashj.demo.R
 import org.dash.dashj.demo.WalletManager
-import org.dash.dashj.demo.event.MasternodeListUpdateEvent
+import org.dash.dashj.demo.event.GovernanceObjectsRequestEvent
+import org.dash.dashj.demo.event.MasternodeListRequestEvent
 import org.dash.dashj.demo.ui.BaseListFragment
+import org.dash.dashj.demo.ui.governancelist.GovernanceListAdapter
+import org.dash.dashj.demo.ui.governancelist.GovernanceListViewModel
 import org.greenrobot.eventbus.EventBus
 
-class MasternodeListFragment : BaseListFragment<MasternodeListAdapter, MasternodeListViewModel>() {
+class GovernanceListFragment : BaseListFragment<GovernanceListAdapter, GovernanceListViewModel>() {
 
     private lateinit var searchMenuItem: MenuItem
 
@@ -22,14 +25,14 @@ class MasternodeListFragment : BaseListFragment<MasternodeListAdapter, Masternod
         get() = R.string.default_empty_state_message
 
     companion object {
-        fun newInstance() = MasternodeListFragment()
+        fun newInstance() = GovernanceListFragment()
     }
 
-    override fun viewModelType(): Class<MasternodeListViewModel> = MasternodeListViewModel::class.java
+    override fun viewModelType(): Class<GovernanceListViewModel> = GovernanceListViewModel::class.java
 
-    override fun createAdapter(): MasternodeListAdapter {
-        val masternodeManager = WalletManager.getInstance().wallet.context.masternodeManager
-        return MasternodeListAdapter(context!!, masternodeManager)
+    override fun createAdapter(): GovernanceListAdapter {
+        val governanceManager = WalletManager.getInstance().wallet.context.governanceManager
+        return GovernanceListAdapter(context!!, governanceManager)
     }
 
     override fun onResume() {
@@ -39,11 +42,11 @@ class MasternodeListFragment : BaseListFragment<MasternodeListAdapter, Masternod
 
     override fun initView() {
         super.initView()
-        activity!!.setTitle(R.string.fragment_masternode_list_title)
+        activity!!.setTitle(R.string.fragment_governance_list_title)
         setHasOptionsMenu(true)
     }
 
-    override fun bindViewModel(viewModel: MasternodeListViewModel) {
+    override fun bindViewModel(viewModel: GovernanceListViewModel) {
         viewModel.sporkList.observe(this, Observer { masternodeList ->
             adapter.replace(masternodeList)
             updateView(masternodeList != null)
@@ -54,7 +57,7 @@ class MasternodeListFragment : BaseListFragment<MasternodeListAdapter, Masternod
         if (::searchMenuItem.isInitialized) {
             searchMenuItem.collapseActionView()
         }
-        EventBus.getDefault().post(MasternodeListUpdateEvent())
+        EventBus.getDefault().post(GovernanceObjectsRequestEvent())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

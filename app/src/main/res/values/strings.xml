@@ -5,6 +5,7 @@
     <string name="fragment_block_list_title">Blocks</string>
     <string name="fragment_spork_list_title">Sporks</string>
     <string name="fragment_masternode_list_title">Masternode</string>
+    <string name="fragment_governance_list_title">Governance</string>
 
     <string name="fragment_peer_list_empty">No peers connected</string>
     <string name="peer_list_row_host_name_unknown">unknown</string>

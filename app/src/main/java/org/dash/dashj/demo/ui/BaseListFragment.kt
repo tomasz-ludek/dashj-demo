@@ -14,8 +14,7 @@ import android.view.ViewGroup
 import kotlinx.android.synthetic.main.base_list_fragment.*
 import kotlinx.android.synthetic.main.base_list_fragment.view.*
 import org.dash.dashj.demo.R
-import java.text.SimpleDateFormat
-import java.util.*
+import org.dash.dashj.demo.Utils
 
 abstract class BaseListFragment<T : RecyclerView.Adapter<out RecyclerView.ViewHolder>, V : ViewModel> : Fragment() {
 
@@ -81,8 +80,7 @@ abstract class BaseListFragment<T : RecyclerView.Adapter<out RecyclerView.ViewHo
             syncInfoSubMessageView.text = blocksSoFar.toString()
         })
         baseViewModel.date.observe(this, Observer { date ->
-            val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US)
-            syncInfoSubMessageView.text = "Block " + syncInfoSubMessageView.text.toString() + " (" + formatter.format(date) + ")"
+            syncInfoSubMessageView.text = "Block " + syncInfoSubMessageView.text.toString() + " (" + Utils.format(date) + ")"
         })
     }
 

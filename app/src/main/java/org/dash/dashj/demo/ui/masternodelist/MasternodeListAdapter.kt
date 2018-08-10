@@ -9,7 +9,6 @@ import android.widget.Filterable
 import org.bitcoinj.core.Masternode
 import org.bitcoinj.core.MasternodeManager
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.util.MasternodeListFilter
 
 class MasternodeListAdapter(context: Context, masternodeManager: MasternodeManager)
     : RecyclerView.Adapter<MasternodeViewHolder>(), Filterable {

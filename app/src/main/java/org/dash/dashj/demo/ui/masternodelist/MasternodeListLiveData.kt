@@ -1,16 +1,13 @@
 package org.dash.dashj.demo.ui.masternodelist
 
 import android.arch.lifecycle.MutableLiveData
-import org.bitcoinj.core.Context
 import org.bitcoinj.core.Masternode
-import org.bitcoinj.core.MasternodeAddress
 import org.bitcoinj.core.MasternodeManager
 import org.dash.dashj.demo.WalletManager
-import org.dash.dashj.demo.event.MasternodeListRequestEvent
+import org.dash.dashj.demo.event.MasternodeListUpdateEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import java.net.InetAddress
 
 
 class MasternodeListLiveData : MutableLiveData<List<Masternode>>() {
@@ -21,7 +18,7 @@ class MasternodeListLiveData : MutableLiveData<List<Masternode>>() {
 
     override fun onActive() {
         EventBus.getDefault().register(this)
-        EventBus.getDefault().post(MasternodeListRequestEvent())
+        updateValue()
     }
 
     override fun onInactive() {
@@ -29,14 +26,19 @@ class MasternodeListLiveData : MutableLiveData<List<Masternode>>() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    fun onMasternodeListUpdateEvent(event: MasternodeListRequestEvent) {
-//        masternodeCache.clear()
+    fun onMasternodeListUpdateEvent(event: MasternodeListUpdateEvent) {
+        updateValue()
+    }
+
+    fun updateValue() {
+        masternodeCache.clear()
+        masternodeCache.addAll(masternodeManager.masternodes)
 //        val masternodeAddress = MasternodeAddress(InetAddress.getByName("109.235.67.212"), 9999)
 //        val mn = Context.get().masternodeManager.find(masternodeAddress)
 //        if (mn != null) {
 //            masternodeCache.add(mn)
 //        }
 //        value = masternodeCache
-        value = masternodeManager.masternodes
+        value = masternodeCache
     }
 }

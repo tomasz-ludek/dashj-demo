@@ -1,8 +1,12 @@
 package org.dash.dashj.demo
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -12,15 +16,10 @@ import android.view.MenuItem
 import kotlinx.android.synthetic.main.activity_main2.*
 import kotlinx.android.synthetic.main.app_bar_main2.*
 import org.dash.dashj.demo.ui.blocklist.BlockListFragment
+import org.dash.dashj.demo.ui.masternodelist.GovernanceListFragment
 import org.dash.dashj.demo.ui.masternodelist.MasternodeListFragment
 import org.dash.dashj.demo.ui.peerlist.PeerListFragment
 import org.dash.dashj.demo.ui.sporklist.SporkListFragment
-import android.content.Intent
-import android.app.PendingIntent
-import android.app.AlarmManager
-import android.content.Context
-import android.content.Context.ALARM_SERVICE
-import android.preference.PreferenceManager
 
 
 class Main2Activity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -106,6 +105,9 @@ class Main2Activity : AppCompatActivity(), NavigationView.OnNavigationItemSelect
             }
             R.id.nav_masternodes -> {
                 switchFragment(MasternodeListFragment.newInstance())
+            }
+            R.id.nav_governance -> {
+                switchFragment(GovernanceListFragment.newInstance())
             }
         }
 

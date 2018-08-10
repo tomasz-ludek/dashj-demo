@@ -32,4 +32,14 @@ public class Utils {
         iso8601.setTimeZone(UTC);
         return iso8601.format(dateTime);
     }
+
+    public static String format(long unixTimestamp) {
+        Date date = new Date(unixTimestamp * 1000);
+        return format(date);
+    }
+
+    public static String format(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.US);
+        return dateFormat.format(date);
+    }
 }

@@ -1,4 +1,4 @@
-package org.dash.dashj.demo.util;
+package org.dash.dashj.demo.ui.masternodelist;
 
 import android.text.TextUtils;
 import android.widget.Filter;

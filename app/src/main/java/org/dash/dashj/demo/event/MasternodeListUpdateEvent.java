@@ -4,6 +4,10 @@ public class MasternodeListUpdateEvent {
 
     private int syncStatus;
 
+    public MasternodeListUpdateEvent() {
+        this(-1);
+    }
+
     public MasternodeListUpdateEvent(int syncStatus) {
         this.syncStatus = syncStatus;
     }

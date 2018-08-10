@@ -37,6 +37,10 @@
                     android:id="@+id/nav_masternodes"
                     android:icon="@drawable/ic_menu_send"
                     android:title="Masternodes" />
+                <item
+                    android:id="@+id/nav_governance"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="Governance" />
             </group>
         </menu>
     </item>
