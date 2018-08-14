@@ -4,7 +4,7 @@ import android.arch.lifecycle.MutableLiveData
 import org.bitcoinj.governance.GovernanceManager
 import org.bitcoinj.governance.GovernanceObject
 import org.dash.dashj.demo.WalletManager
-import org.dash.dashj.demo.event.GovernanceObjectsRequestEvent
+import org.dash.dashj.demo.event.GovernanceObjectsUpdateEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -18,7 +18,7 @@ class GovernanceListLiveData : MutableLiveData<List<GovernanceObject>>() {
 
     override fun onActive() {
         EventBus.getDefault().register(this)
-        EventBus.getDefault().post(GovernanceObjectsRequestEvent())
+        updateValue()
     }
 
     override fun onInactive() {
@@ -26,7 +26,11 @@ class GovernanceListLiveData : MutableLiveData<List<GovernanceObject>>() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
-    fun onGovernanceObjectsUpdateEvent(event: GovernanceObjectsRequestEvent) {
+    fun onGovernanceObjectsUpdateEvent(event: GovernanceObjectsUpdateEvent) {
+        updateValue()
+    }
+
+    private fun updateValue() {
         governanceObjectsCache.clear()
         governanceObjectsCache.addAll(governanceManager.getAllNewerThan(0))
         value = governanceObjectsCache

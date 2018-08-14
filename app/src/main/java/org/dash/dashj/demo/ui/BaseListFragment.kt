@@ -4,6 +4,7 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -11,9 +12,8 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.base_list_fragment.*
 import kotlinx.android.synthetic.main.base_list_fragment.view.*
-import org.dash.dashj.demo.Main2Activity
+import org.dash.dashj.demo.MainActivity
 import org.dash.dashj.demo.R
 import org.dash.dashj.demo.Utils
 import org.dash.dashj.demo.WalletManager
@@ -54,7 +54,8 @@ abstract class BaseListFragment<T : RecyclerView.Adapter<out RecyclerView.ViewHo
     }
 
     protected open fun initView() {
-        (activity as Main2Activity).setSubTitle(WalletManager.getInstance().configName)
+        (activity as MainActivity).setSubTitle(WalletManager.getInstance().configName)
+        layoutView.infoView.visibility = View.GONE
         layoutView.recyclerView.layoutManager = LinearLayoutManager(context)
         layoutView.recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
         this.adapter = createAdapter()
@@ -78,16 +79,11 @@ abstract class BaseListFragment<T : RecyclerView.Adapter<out RecyclerView.ViewHo
     }
 
     protected open fun bindBaseViewModel() {
-        syncInfoPaneView.visibility = View.GONE
         baseViewModel.pct.observe(this, Observer { pct ->
-            syncInfoMessageView.text = String.format("Chain download %.0f%% done", pct)
-            syncInfoPaneView.visibility = View.VISIBLE
-        })
-        baseViewModel.blocksSoFar.observe(this, Observer { blocksSoFar ->
-            syncInfoSubMessageView.text = blocksSoFar.toString()
-        })
-        baseViewModel.date.observe(this, Observer { date ->
-            syncInfoSubMessageView.text = "Block " + syncInfoSubMessageView.text.toString() + " (" + Utils.format(date) + ")"
+            baseViewModel.date?.let {
+                val message = ("Chain download %.0f%% done \n Block ${baseViewModel.blocksSoFar} (${Utils.format(it)})").format(baseViewModel.pct.value)
+                Snackbar.make(layoutView, message, Snackbar.LENGTH_LONG).setAction("Action", null).show()
+            }
         })
     }
 
@@ -95,6 +91,11 @@ abstract class BaseListFragment<T : RecyclerView.Adapter<out RecyclerView.ViewHo
         layoutView.refreshView.isRefreshing = false
         layoutView.rootAnimatorView.displayedChild =
                 if (showReadyState) READY_STATE_VIEW else EMPTY_STATE_VIEW
+    }
+
+    protected fun setInfo(text: CharSequence) {
+        layoutView.infoView.visibility = View.VISIBLE
+        layoutView.infoView.text = text
     }
 
     override fun onStart() {

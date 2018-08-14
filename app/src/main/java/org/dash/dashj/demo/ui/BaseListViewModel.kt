@@ -12,8 +12,8 @@ import java.util.*
 class BaseListViewModel : ViewModel() {
 
     private val _pct = MutableLiveData<Double>()
-    private val _blocksSoFar = MutableLiveData<Int>()
-    private val _date = MutableLiveData<Date>()
+    private var _blocksSoFar: Int? = null
+    private var _date: Date? = null
 
     init {
         EventBus.getDefault().register(this)
@@ -22,17 +22,17 @@ class BaseListViewModel : ViewModel() {
     val pct: LiveData<Double>
         get() = _pct
 
-    val blocksSoFar: LiveData<Int>
+    val blocksSoFar: Int?
         get() = _blocksSoFar
 
-    val date: LiveData<Date>
+    val date: Date?
         get() = _date
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN_ORDERED)
     fun onSyncUpdateEvent(event: SyncUpdateEvent) {
         _pct.value = event.pct
-        _blocksSoFar.value = event.blocksSoFar
-        _date.value = event.date
+        _blocksSoFar = event.blocksSoFar
+        _date = event.date
     }
 
     override fun onCleared() {

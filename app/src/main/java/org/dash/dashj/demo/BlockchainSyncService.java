@@ -13,12 +13,15 @@ import org.bitcoinj.core.MasternodeSyncListener;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.core.Peer;
 import org.bitcoinj.core.PeerGroup;
+import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.SporkMessage;
 import org.bitcoinj.core.SporkSyncListener;
 import org.bitcoinj.core.StoredBlock;
 import org.bitcoinj.core.listeners.DownloadProgressTracker;
 import org.bitcoinj.core.listeners.PeerConnectedEventListener;
 import org.bitcoinj.core.listeners.PeerDisconnectedEventListener;
+import org.bitcoinj.governance.GovernanceObject;
+import org.bitcoinj.governance.listeners.GovernanceObjectAddedEventListener;
 import org.bitcoinj.net.discovery.MultiplexingDiscovery;
 import org.bitcoinj.net.discovery.PeerDiscovery;
 import org.bitcoinj.net.discovery.PeerDiscoveryException;
@@ -28,7 +31,6 @@ import org.bitcoinj.store.SPVBlockStore;
 import org.bitcoinj.wallet.Wallet;
 import org.dash.dashj.demo.event.BlockListRequestEvent;
 import org.dash.dashj.demo.event.BlockListUpdateEvent;
-import org.dash.dashj.demo.event.MasternodeListRequestEvent;
 import org.dash.dashj.demo.event.MasternodeListUpdateEvent;
 import org.dash.dashj.demo.event.PeerListRequestEvent;
 import org.dash.dashj.demo.event.PeerListUpdateEvent;
@@ -102,10 +104,18 @@ public class BlockchainSyncService extends Service {
             }
         });
 
+        wallet.getContext().governanceManager.addGovernanceObjectAddedEventListener(new GovernanceObjectAddedEventListener() {
+            @Override
+            public void onGovernanceObjectAdded(Sha256Hash nHash, GovernanceObject object) {
+                Log.d(TAG, "onGovernanceObjectAdded: " + object);
+            }
+        });
+
         wallet.getContext().masternodeSync.addEventListener(new MasternodeSyncListener() {
             @Override
             public void onSyncStatusChanged(int newStatus, double syncStatus) {
                 postMasternodeListEvent(newStatus);
+                Log.d(TAG, "newStatus: " + newStatus);
                 if (newStatus == MasternodeSync.MASTERNODE_SYNC_FINISHED) {
                     /*
                     Log.d(TAG, "masternodeSync1");
@@ -253,10 +263,6 @@ public class BlockchainSyncService extends Service {
     @Subscribe
     public void onBlockListRequestEvent(BlockListRequestEvent event) {
         postBlockListEvent();
-    }
-
-    public void onMasternodeListRequestEvent(MasternodeListRequestEvent event) {
-        postMasternodeListEvent(-1);
     }
 
     private void postPeerListEvent() {

@@ -10,8 +10,7 @@ import android.view.View
 import android.widget.Filterable
 import org.dash.dashj.demo.R
 import org.dash.dashj.demo.WalletManager
-import org.dash.dashj.demo.event.GovernanceObjectsRequestEvent
-import org.dash.dashj.demo.event.MasternodeListRequestEvent
+import org.dash.dashj.demo.event.GovernanceObjectsUpdateEvent
 import org.dash.dashj.demo.ui.BaseListFragment
 import org.dash.dashj.demo.ui.governancelist.GovernanceListAdapter
 import org.dash.dashj.demo.ui.governancelist.GovernanceListViewModel
@@ -47,9 +46,12 @@ class GovernanceListFragment : BaseListFragment<GovernanceListAdapter, Governanc
     }
 
     override fun bindViewModel(viewModel: GovernanceListViewModel) {
-        viewModel.sporkList.observe(this, Observer { masternodeList ->
-            adapter.replace(masternodeList)
-            updateView(masternodeList != null)
+        viewModel.governanceList.observe(this, Observer { governanceList ->
+            governanceList?.let {
+                adapter.replace(it)
+                updateView(it.isNotEmpty())
+                setInfo("Objects count: ${it.size}")
+            }
         })
     }
 
@@ -57,7 +59,7 @@ class GovernanceListFragment : BaseListFragment<GovernanceListAdapter, Governanc
         if (::searchMenuItem.isInitialized) {
             searchMenuItem.collapseActionView()
         }
-        EventBus.getDefault().post(GovernanceObjectsRequestEvent())
+        EventBus.getDefault().post(GovernanceObjectsUpdateEvent())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

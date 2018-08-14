@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">DashJ Demo</string>
 
+    <string name="fragment_utils_title">Utils</string>
     <string name="fragment_peer_list_title">Peers</string>
     <string name="fragment_block_list_title">Blocks</string>
     <string name="fragment_spork_list_title">Sporks</string>

@@ -6,6 +6,10 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_utils"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Utils" />
+        <item
             android:id="@+id/nav_peers"
             android:icon="@drawable/ic_menu_send"
             android:title="Peers" />

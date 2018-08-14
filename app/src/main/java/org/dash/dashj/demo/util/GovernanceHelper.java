@@ -12,6 +12,9 @@ import java.io.IOException;
 
 public class GovernanceHelper {
 
+    public static final String UNKNOWN_TYPE = "unknown";
+    public static final String PROPOSAL_TYPE = "proposal";
+
     public static GovernanceProposalData parseProposal(String proposalData) {
         Moshi moshi = new Moshi.Builder().build();
         JsonAdapter<GovernanceProposalData> adapter = moshi.adapter(GovernanceProposalData.class);
@@ -27,7 +30,7 @@ public class GovernanceHelper {
             JSONArray enclosureArray = new JSONArray(data).getJSONArray(0);
             return new Pair<>(enclosureArray.getString(0), enclosureArray.getString(1));
         } catch (Exception e) {
-            throw new IllegalArgumentException("Incorrect proposal data " + data, e);
+            return new Pair<>(UNKNOWN_TYPE, data);
         }
     }
 }

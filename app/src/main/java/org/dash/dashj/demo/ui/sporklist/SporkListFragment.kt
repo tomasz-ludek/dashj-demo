@@ -30,8 +30,11 @@ class SporkListFragment : BaseListFragment<SporkListAdapter, SporkListViewModel>
 
     override fun bindViewModel(viewModel: SporkListViewModel) {
         viewModel.sporkList.observe(this, Observer { sporkList ->
-            adapter.replace(sporkList)
-            updateView(sporkList != null)
+            sporkList?.let {
+                adapter.replace(sporkList)
+                updateView(it.isNotEmpty())
+                setInfo("Sporks count: ${it.size}")
+            }
         })
     }
 

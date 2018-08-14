@@ -45,8 +45,11 @@ class MasternodeListFragment : BaseListFragment<MasternodeListAdapter, Masternod
 
     override fun bindViewModel(viewModel: MasternodeListViewModel) {
         viewModel.sporkList.observe(this, Observer { masternodeList ->
-            adapter.replace(masternodeList)
-            updateView(masternodeList != null)
+            masternodeList?.let {
+                adapter.replace(it)
+                updateView(it.isNotEmpty())
+                setInfo("Masternodes count: ${it.size}")
+            }
         })
     }
 

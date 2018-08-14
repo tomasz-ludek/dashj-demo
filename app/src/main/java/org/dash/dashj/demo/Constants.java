@@ -5,7 +5,7 @@ import java.util.concurrent.TimeUnit;
 public interface Constants {
 
     String WALLET_TESTNET3_NAME = "testnet";
-    String WALLET_SEED_TESTNET3_NAME = "seed-testnet";
+    String WALLET_SEED_TESTNET3_NAME = "dummy-testnet";
     String WALLET_MAINNET_NAME = "mainnet";
 
     String WALLET_FILE_EXT = ".wallet";

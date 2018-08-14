@@ -22,7 +22,7 @@ class GovernanceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), 
         val typeAndData = GovernanceHelper.extractTypeAndData(governanceObject.dataAsPlainString)
         val type = typeAndData.first
 
-        val isProposal = type == "proposal"
+        val isProposal = (type == GovernanceHelper.PROPOSAL_TYPE)
 
         nameRowView.visibility = if (isProposal) View.VISIBLE else View.GONE
         startDateRowView.visibility = if (isProposal) View.VISIBLE else View.GONE

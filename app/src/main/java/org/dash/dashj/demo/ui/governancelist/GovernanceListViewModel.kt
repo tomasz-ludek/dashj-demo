@@ -8,6 +8,6 @@ class GovernanceListViewModel : ViewModel() {
 
     private val _governanceList = GovernanceListLiveData()
 
-    val sporkList: LiveData<List<GovernanceObject>>
+    val governanceList: LiveData<List<GovernanceObject>>
         get() = _governanceList
 }

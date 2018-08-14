@@ -37,38 +37,30 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerView"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scrollbars="vertical" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/infoView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingBottom="8dp" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scrollbars="vertical" />
+
+            </LinearLayout>
 
         </android.support.v4.widget.SwipeRefreshLayout>
 
     </ViewAnimator>
-
-    <LinearLayout
-        android:id="@+id/syncInfoPaneView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#aaccff"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:id="@+id/syncInfoMessageView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/default_empty_state_message"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <TextView
-            android:id="@+id/syncInfoSubMessageView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/default_empty_state_message"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-
-    </LinearLayout>
 
 </LinearLayout>
