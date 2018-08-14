@@ -44,7 +44,7 @@ class MasternodeListFragment : BaseListFragment<MasternodeListAdapter, Masternod
     }
 
     override fun bindViewModel(viewModel: MasternodeListViewModel) {
-        viewModel.sporkList.observe(this, Observer { masternodeList ->
+        viewModel.masternodeList.observe(this, Observer { masternodeList ->
             masternodeList?.let {
                 adapter.replace(it)
                 updateView(it.isNotEmpty())

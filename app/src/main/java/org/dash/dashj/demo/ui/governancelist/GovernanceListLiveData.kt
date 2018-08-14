@@ -1,7 +1,6 @@
 package org.dash.dashj.demo.ui.governancelist
 
 import android.arch.lifecycle.MutableLiveData
-import org.bitcoinj.governance.GovernanceManager
 import org.bitcoinj.governance.GovernanceObject
 import org.dash.dashj.demo.WalletManager
 import org.dash.dashj.demo.event.GovernanceObjectsUpdateEvent
@@ -14,7 +13,7 @@ class GovernanceListLiveData : MutableLiveData<List<GovernanceObject>>() {
 
     private val governanceObjectsCache = mutableListOf<GovernanceObject>()
 
-    private val governanceManager: GovernanceManager = WalletManager.getInstance().wallet.context.governanceManager
+    private val governanceManager = WalletManager.getInstance().wallet.context.governanceManager
 
     override fun onActive() {
         EventBus.getDefault().register(this)

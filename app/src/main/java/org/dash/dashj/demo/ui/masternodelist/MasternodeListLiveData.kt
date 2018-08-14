@@ -30,7 +30,7 @@ class MasternodeListLiveData : MutableLiveData<List<Masternode>>() {
         updateValue()
     }
 
-    fun updateValue() {
+    private fun updateValue() {
         masternodeCache.clear()
         masternodeCache.addAll(masternodeManager.masternodes)
 //        val masternodeAddress = MasternodeAddress(InetAddress.getByName("109.235.67.212"), 9999)

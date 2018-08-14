@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class WalletConfig {
 
@@ -121,6 +122,7 @@ public class WalletConfig {
 
     public void create(Wallet wallet) {
         this.wallet = wallet;
+        wallet.autosaveToFile(walletFile, 30, TimeUnit.SECONDS, null);
         saveWallet();
     }
 

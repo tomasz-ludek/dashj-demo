@@ -8,6 +8,6 @@ class MasternodeListViewModel : ViewModel() {
 
     private val _masternodeList = MasternodeListLiveData()
 
-    val sporkList: LiveData<List<Masternode>>
+    val masternodeList: LiveData<List<Masternode>>
         get() = _masternodeList
 }

@@ -12,6 +12,8 @@ import android.view.View
 import android.widget.TextView
 import kotlinx.android.synthetic.main.main_activity.*
 import kotlinx.android.synthetic.main.main_app_bar.*
+import org.dash.dashj.demo.ui.addresshierarchy.AddressHierarchyAdapter
+import org.dash.dashj.demo.ui.addresshierarchy.AddressHierarchyFragment
 import org.dash.dashj.demo.ui.blocklist.BlockListFragment
 import org.dash.dashj.demo.ui.masternodelist.GovernanceListFragment
 import org.dash.dashj.demo.ui.masternodelist.MasternodeListFragment
@@ -147,6 +149,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_governance -> {
                 switchFragment(GovernanceListFragment.newInstance())
+            }
+            R.id.nav_address -> {
+                switchFragment(AddressHierarchyFragment.newInstance())
             }
         }
         drawer_layout.closeDrawer(GravityCompat.START)

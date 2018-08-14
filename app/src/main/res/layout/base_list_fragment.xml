@@ -51,6 +51,11 @@
                     android:paddingEnd="16dp"
                     android:paddingBottom="8dp" />
 
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:background="@color/colorAccent" />
+
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recyclerView"
                     android:layout_width="match_parent"
