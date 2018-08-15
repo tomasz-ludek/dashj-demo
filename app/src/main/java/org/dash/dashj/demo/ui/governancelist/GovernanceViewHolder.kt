@@ -10,13 +10,11 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.governance_list_row.*
-import org.bitcoinj.core.Context
 import org.bitcoinj.governance.GovernanceObject
-import org.bitcoinj.masternode.owner.MasternodeControl
 import org.dash.dashj.demo.R
 import org.dash.dashj.demo.Utils
+import org.dash.dashj.demo.VoteActivity
 import org.dash.dashj.demo.util.GovernanceHelper
-import java.io.File
 
 
 class GovernanceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), LayoutContainer {
@@ -35,7 +33,7 @@ class GovernanceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), 
         endDateRowView.visibility = if (isProposal) View.VISIBLE else View.GONE
 
         if (isProposal) {
-            val proposal = GovernanceHelper.parseProposal(governanceObject.dataAsPlainString)
+            val proposal = GovernanceHelper.parseProposal(governanceObject)
             nameView.text = proposal.name
             startDateView.text = Utils.format(proposal.startDate)
             endDateView.text = Utils.format(proposal.endDate)
@@ -81,14 +79,9 @@ class GovernanceViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), 
     }
 
     private fun voteOnProposal(governanceObject: GovernanceObject) {
-//        val control = MasternodeControl(Context.get(), "masternode.conf")
-        val control = MasternodeControl(Context.get(), null as File?)
-        
-
-        val error = StringBuilder()
-        val broadcast = control.voteAlias("mn01", governanceObject.hash.toString(), "funding", "no", error)
-        System.out.println(broadcast?.toString())
-        Toast.makeText(itemView.context, "$error \n ${broadcast?.toString()}", Toast.LENGTH_LONG).show()
+        val proposalDate = GovernanceHelper.extractData(governanceObject.dataAsPlainString)
+        val proposalHash = governanceObject.hash.toString()
+        itemView.context.startActivity(VoteActivity.createIntent(itemView.context, proposalHash, proposalDate))
     }
 
     private fun openProposalUrl(url: String) {
