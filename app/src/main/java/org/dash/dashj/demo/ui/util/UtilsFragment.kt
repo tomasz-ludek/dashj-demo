@@ -62,6 +62,11 @@ class UtilsFragment : Fragment() {
                 Toast.makeText(activity, x.message, Toast.LENGTH_LONG).show()
             }
         }
+
+        layoutView.voteBtnView.setOnClickListener {
+            val error = StringBuilder()
+
+        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

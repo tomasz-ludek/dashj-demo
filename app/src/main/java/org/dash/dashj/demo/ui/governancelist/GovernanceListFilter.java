@@ -1,12 +1,10 @@
 package org.dash.dashj.demo.ui.governancelist;
 
 import android.text.TextUtils;
-import android.util.Pair;
 import android.widget.Filter;
 
 import org.bitcoinj.governance.GovernanceObject;
 import org.dash.dashj.demo.WalletManager;
-import org.dash.dashj.demo.util.GovernanceHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +22,10 @@ public abstract class GovernanceListFilter extends Filter {
         WalletManager.getInstance().propagateContext();
         FilterResults results = new FilterResults();
         if (!TextUtils.isEmpty(constraint)) {
-            constraint = constraint.toString().toUpperCase();
+            constraint = constraint.toString().toLowerCase();
             ArrayList<GovernanceObject> filteredGovernanceObjects = new ArrayList<>();
             for (GovernanceObject governanceObject : refGovernanceObjects) {
-                Pair<String, String> typeAndData = GovernanceHelper.extractTypeAndData(governanceObject.getDataAsPlainString());
-                if (typeAndData.first.equals("proposal") && typeAndData.second.toUpperCase().contains(constraint)) {
+                if (governanceObject.getDataAsPlainString().toLowerCase().contains(constraint)) {
                     filteredGovernanceObjects.add(governanceObject);
                 }
             }
