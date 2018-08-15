@@ -15,19 +15,11 @@
         android:text="Wallet.toString(...)" />
 
     <TextView
-        android:id="@+id/displayKeyChainBtnView"
+        android:id="@+id/importAddressBtnView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
         android:padding="16dp"
-        android:text="Display Key Chain" />
-
-    <TextView
-        android:id="@+id/voteBtnView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/selectableItemBackground"
-        android:padding="16dp"
-        android:text="Vote" />
+        android:text="Import address" />
 
 </LinearLayout>
