@@ -5,8 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.MenuItem
 import android.view.View
-import kotlinx.android.synthetic.main.utils_fragment.*
 import kotlinx.android.synthetic.main.vote_activity.*
 import org.bitcoinj.masternode.owner.MasternodeControl
 import org.dash.dashj.demo.ui.governancelist.GovernanceProposalData
@@ -35,6 +35,8 @@ class VoteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.vote_activity)
         setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true);
+        supportActionBar!!.setDisplayShowHomeEnabled(true);
         initView()
     }
 
@@ -44,13 +46,20 @@ class VoteActivity : AppCompatActivity() {
         val proposalData = extras.getString(EXTRA_PROPOSAL_DATA)
         proposal = GovernanceHelper.parseProposal(proposalData)
 
-        toolbar.title = "Vote on Proposal"
+        title = "Vote on Proposal"
         toolbar.subtitle = proposal.name
 
         hashView.text = "hash: $proposalHash"
 
         voteBtnView.setOnClickListener {
             voteOnProposal()
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_settings -> return true
+            else -> return super.onOptionsItemSelected(item)
         }
     }
 
@@ -68,10 +77,10 @@ class VoteActivity : AppCompatActivity() {
         }
 
         val control = MasternodeControl(org.bitcoinj.core.Context.get(), null as File?)
-        control.masternodeConfig.add("mn01", ipPort, masternodePrivKey, collateralTxid, collateralIndex)
+        control.masternodeConfig.add("masternode", ipPort, masternodePrivKey, collateralTxid, collateralIndex)
 
         val error = StringBuilder()
-        val broadcast = control.voteAlias("mn01", proposalHash, "funding", voteOutcome, error)
+        val broadcast = control.voteAlias("masternode", proposalHash, "funding", voteOutcome, error)
 
         voteResultView.visibility = View.VISIBLE
         voteResultView.text = "$error\n$broadcast"

@@ -29,7 +29,8 @@
 
         <activity
             android:name=".VoteActivity"
-            android:windowSoftInputMode="adjustResize" />
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
         <service
             android:name=".BlockchainSyncService"

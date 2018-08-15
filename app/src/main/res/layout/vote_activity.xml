@@ -92,7 +92,7 @@
                     android:layout_height="wrap_content"
                     android:hint="collateral_output_index"
                     android:importantForAutofill="no"
-                    android:inputType="textFilter"
+                    android:inputType="phone"
                     android:maxLength="128" />
 
             </android.support.design.widget.TextInputLayout>
@@ -138,6 +138,7 @@
                 android:visibility="gone" />
 
             <Button
+                android:id="@+id/voteBtnView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
