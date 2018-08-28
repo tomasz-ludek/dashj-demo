@@ -18,6 +18,14 @@
             android:icon="@drawable/ic_menu_send"
             android:title="Blocks" />
         <item
+            android:id="@+id/nav_transaction"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Transactions" />
+        <item
+            android:id="@+id/nav_address"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Address hierarchy" />
+        <item
             android:id="@+id/nav_sporks"
             android:icon="@drawable/ic_menu_send"
             android:title="Sporks" />
@@ -29,10 +37,6 @@
             android:id="@+id/nav_governance"
             android:icon="@drawable/ic_menu_send"
             android:title="Governance" />
-        <item
-            android:id="@+id/nav_address"
-            android:icon="@drawable/ic_menu_send"
-            android:title="Address hierarchy" />
     </group>
 
 </menu>

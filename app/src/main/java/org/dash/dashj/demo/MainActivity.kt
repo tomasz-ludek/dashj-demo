@@ -12,12 +12,12 @@ import android.view.View
 import android.widget.TextView
 import kotlinx.android.synthetic.main.main_activity.*
 import kotlinx.android.synthetic.main.main_app_bar.*
-import org.dash.dashj.demo.ui.addresshierarchy.AddressHierarchyAdapter
 import org.dash.dashj.demo.ui.addresshierarchy.AddressHierarchyFragment
 import org.dash.dashj.demo.ui.blocklist.BlockListFragment
 import org.dash.dashj.demo.ui.masternodelist.GovernanceListFragment
 import org.dash.dashj.demo.ui.masternodelist.MasternodeListFragment
 import org.dash.dashj.demo.ui.peerlist.PeerListFragment
+import org.dash.dashj.demo.ui.transactionlist.TransactionListFragment
 import org.dash.dashj.demo.ui.sporklist.SporkListFragment
 import org.dash.dashj.demo.ui.util.UtilsFragment
 
@@ -140,6 +140,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_blocks -> {
                 switchFragment(BlockListFragment.newInstance())
+            }
+            R.id.nav_transaction -> {
+                switchFragment(TransactionListFragment.newInstance())
             }
             R.id.nav_sporks -> {
                 switchFragment(SporkListFragment.newInstance())
