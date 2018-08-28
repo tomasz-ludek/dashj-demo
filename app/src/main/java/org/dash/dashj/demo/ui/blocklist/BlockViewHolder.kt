@@ -18,6 +18,7 @@ import org.bitcoinj.core.Transaction
 import org.bitcoinj.wallet.Wallet
 import org.dash.dashj.demo.R
 
+
 class BlockViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), LayoutContainer {
 
     companion object {
@@ -39,8 +40,8 @@ class BlockViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Layou
     fun bind(storedBlock: StoredBlock, transactions: Set<Transaction>, wallet: Wallet) {
         val header = storedBlock.header
         miningRewardAdjustmentView.visibility = if (isMiningRewardHalvingPoint(storedBlock)) View.VISIBLE else View.GONE
-        //        holder.miningDifficultyAdjustmentView
-//                .setVisibility(isDifficultyTransitionPoint(storedBlock) ? View.VISIBLE : View.GONE);
+        miningDifficultyAdjustmentView
+                .visibility = if (isDifficultyTransitionPoint(storedBlock, wallet)) View.VISIBLE else View.GONE
 
         val height = storedBlock.height
         heightView.text = height.toString()
@@ -162,6 +163,10 @@ class BlockViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), Layou
 
     private fun isMiningRewardHalvingPoint(storedPrev: StoredBlock): Boolean {
         return (storedPrev.height + 1) % 210000 == 0
+    }
+
+    private fun isDifficultyTransitionPoint(storedPrev: StoredBlock, wallet: Wallet): Boolean {
+        return if (storedPrev.height + 1 < 15200) (storedPrev.height + 1) % wallet.networkParameters.interval == 0 else false
     }
 
     private fun formatHash(prefix: String?, address: String, groupSize: Int, lineSize: Int, groupSeparator: Char): Editable {

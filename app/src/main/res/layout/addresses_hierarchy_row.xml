@@ -5,6 +5,9 @@
     android:layout_height="wrap_content"
     android:padding="16dp"
     android:stretchColumns="1"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
     tools:ignore="HardcodedText">
 
     <TableRow>

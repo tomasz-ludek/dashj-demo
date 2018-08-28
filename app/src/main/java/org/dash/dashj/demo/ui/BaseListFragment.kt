@@ -4,7 +4,6 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
@@ -81,8 +80,10 @@ abstract class BaseListFragment<T : RecyclerView.Adapter<out RecyclerView.ViewHo
     protected open fun bindBaseViewModel() {
         baseViewModel.pct.observe(this, Observer { pct ->
             baseViewModel.date?.let {
-                val message = ("Chain download %.0f%% done \n Block ${baseViewModel.blocksSoFar} (${Utils.format(it)})").format(baseViewModel.pct.value)
-                Snackbar.make(layoutView, message, Snackbar.LENGTH_LONG).setAction("Action", null).show()
+                val message = ("Chain download %.0f%% done\nBlocks left: ${baseViewModel.blocksSoFar} (${Utils.format(it)})").format(pct)
+                //Snackbar.make(layoutView, message, Snackbar.LENGTH_LONG).setAction("Action", null).show()
+                layoutView.bottomInfoView.visibility = View.VISIBLE
+                layoutView.bottomInfoView.text = message
             }
         })
     }

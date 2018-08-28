@@ -22,5 +22,5 @@ public interface Constants {
     int PEER_DISCOVERY_TIMEOUT_MS = (int) TimeUnit.MINUTES.toMillis(10);
     int PEER_TIMEOUT_MS = (int) TimeUnit.MINUTES.toMillis(15);
 
-    int MAX_BLOCKS = 128;
+    int MAX_BLOCKS = 4096;
 }

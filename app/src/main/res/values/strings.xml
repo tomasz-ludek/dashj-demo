@@ -3,6 +3,7 @@
 
     <string name="fragment_utils_title">Utils</string>
     <string name="fragment_peer_list_title">Peers</string>
+    <string name="fragment_transaction_list_title">Transactions</string>
     <string name="fragment_block_list_title">Blocks</string>
     <string name="fragment_spork_list_title">Sporks</string>
     <string name="fragment_masternode_list_title">Masternode</string>
@@ -24,6 +25,7 @@
     <string name="symbol_internal">⇄</string>
 
     <string name="default_empty_state_message">Synchronizing…</string>
+    <string name="loading_state_message">Loading…</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
