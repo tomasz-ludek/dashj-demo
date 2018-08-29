@@ -1,7 +1,9 @@
 package org.dash.dashj.demo;
 
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -117,29 +119,7 @@ public class BlockchainSyncService extends Service {
                 postMasternodeListEvent(newStatus);
                 Log.d(TAG, "newStatus: " + newStatus);
                 if (newStatus == MasternodeSync.MASTERNODE_SYNC_FINISHED) {
-                    /*
-                    Log.d(TAG, "masternodeSync1");
-                    try {
-                        Log.d(TAG, "masternodeSync2");
-                        org.bitcoinj.core.Context.propagate(WalletManager.getInstance().getWallet().getContext());
-                        Log.d(TAG, "masternodeSync3");
-                    } catch (Throwable ignored) {
-                        Log.d(TAG, "masternodeSync4");
-                    }
-                    Log.d(TAG, "masternodeSync5");
-                    Log.d(TAG, "masternodeSync: " + wallet.getContext().masternodeManager);
-                    Log.d(TAG, "masternodeSync6");
 
-                    FlatDB<MasternodeManager> mndb = new FlatDB<>(walletManager.getMasternodeDataPath(), "mncache.dat", "magicMasternodeCache");
-                    mndb.dump(Context.get().masternodeManager);
-
-                    mndb.load(Context.get().masternodeManager);
-                    */
-
-//                if(control == null) {
-//                    control = new MasternodeControl(Context.get(), "masternode.conf");
-//                    control.load();
-//                }
                 }
             }
         });
@@ -277,21 +257,32 @@ public class BlockchainSyncService extends Service {
         EventBus.getDefault().post(new SporkListUpdateEvent(spork));
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void postBlockListEvent() {
-        int maxBlocks = Constants.MAX_BLOCKS;
-        final List<StoredBlock> blocks = new ArrayList<>(maxBlocks);
-        try {
-            StoredBlock block = blockChain.getChainHead();
-            while (block != null) {
-                blocks.add(block);
-                if (blocks.size() >= maxBlocks) {
-                    break;
+        new AsyncTask<Void, Void, List<StoredBlock>>() {
+            @Override
+            protected List<StoredBlock> doInBackground(Void... voids) {
+                int maxBlocks = Constants.MAX_BLOCKS;
+                final List<StoredBlock> blocks = new ArrayList<>(maxBlocks);
+                try {
+                    StoredBlock block = blockChain.getChainHead();
+                    while (block != null) {
+                        blocks.add(block);
+                        if (blocks.size() >= maxBlocks) {
+                            break;
+                        }
+                        block = block.getPrev(blockStore);
+                    }
+                } catch (final BlockStoreException ignored) {
                 }
-                block = block.getPrev(blockStore);
+                return blocks;
             }
-        } catch (final BlockStoreException ignored) {
-        }
-        EventBus.getDefault().post(new BlockListUpdateEvent(blocks));
+
+            @Override
+            protected void onPostExecute(List<StoredBlock> storedBlocks) {
+                EventBus.getDefault().post(new BlockListUpdateEvent(storedBlocks));
+            }
+        }.execute();
     }
 
     private void postMasternodeListEvent(int syncStatus) {

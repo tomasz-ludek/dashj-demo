@@ -25,7 +25,5 @@ class MasternodeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), 
         lastCheckedView.text = Date(masternodeInfo.nTimeLastChecked).toString()
         lastPaidView.text = Date(masternodeInfo.nTimeLastChecked).toString()
         lastPingView.text = Date(masternodeInfo.nTimeLastPing * 1000).toString()
-
-//        hashView.text = masternode.hash.toString()
     }
 }

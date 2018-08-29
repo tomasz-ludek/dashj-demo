@@ -1,6 +1,8 @@
 package org.dash.dashj.demo.ui.masternodelist
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.MutableLiveData
+import android.os.AsyncTask
 import org.bitcoinj.core.Masternode
 import org.bitcoinj.core.MasternodeManager
 import org.dash.dashj.demo.WalletManager
@@ -16,6 +18,13 @@ class MasternodeListLiveData : MutableLiveData<List<Masternode>>() {
 
     private val masternodeManager: MasternodeManager = WalletManager.getInstance().wallet.context.masternodeManager
 
+    private var loadingTask: LoadMasternodesTask? = null
+
+    private var _latestSyncStatus = -1
+
+    public val latestSyncStatus
+        get() = _latestSyncStatus
+
     override fun onActive() {
         EventBus.getDefault().register(this)
         updateValue()
@@ -27,18 +36,31 @@ class MasternodeListLiveData : MutableLiveData<List<Masternode>>() {
 
     @Subscribe(threadMode = ThreadMode.MAIN_ORDERED)
     fun onMasternodeListUpdateEvent(event: MasternodeListUpdateEvent) {
+        _latestSyncStatus = event.syncStatus
         updateValue()
     }
 
     private fun updateValue() {
-        masternodeCache.clear()
-        masternodeCache.addAll(masternodeManager.masternodes)
-//        val masternodeAddress = MasternodeAddress(InetAddress.getByName("109.235.67.212"), 9999)
-//        val mn = Context.get().masternodeManager.find(masternodeAddress)
-//        if (mn != null) {
-//            masternodeCache.add(mn)
-//        }
-//        value = masternodeCache
-        value = masternodeCache
+        if (loadingTask == null) {
+            loadingTask = LoadMasternodesTask()
+            loadingTask?.execute(masternodeManager)
+        }
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    internal inner class LoadMasternodesTask : AsyncTask<MasternodeManager, Void, List<Masternode>>() {
+
+        override fun doInBackground(vararg args: MasternodeManager): List<Masternode> {
+            val wallet = args[0]
+//            org.bitcoinj.core.Context.propagate(Constants.CONTEXT)
+            return masternodeManager.masternodes
+        }
+
+        override fun onPostExecute(result: List<Masternode>) {
+            masternodeCache.clear()
+            masternodeCache.addAll(masternodeManager.masternodes)
+            value = masternodeCache
+            loadingTask = null
+        }
     }
 }

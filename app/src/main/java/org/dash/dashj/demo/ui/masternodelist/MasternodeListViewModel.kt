@@ -10,4 +10,7 @@ class MasternodeListViewModel : ViewModel() {
 
     val masternodeList: LiveData<List<Masternode>>
         get() = _masternodeList
+
+    val latestSyncStatus: Int
+        get() = _masternodeList.latestSyncStatus
 }

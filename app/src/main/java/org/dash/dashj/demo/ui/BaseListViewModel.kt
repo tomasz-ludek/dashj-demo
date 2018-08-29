@@ -17,6 +17,7 @@ class BaseListViewModel : ViewModel() {
 
     init {
         EventBus.getDefault().register(this)
+        System.out.println("SyncUpdateEvent: " + EventBus.getDefault().getStickyEvent(SyncUpdateEvent::class.java))
     }
 
     val pct: LiveData<Double>
@@ -28,7 +29,7 @@ class BaseListViewModel : ViewModel() {
     val date: Date?
         get() = _date
 
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN_ORDERED)
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onSyncUpdateEvent(event: SyncUpdateEvent) {
         _pct.value = event.pct
         _blocksSoFar = event.blocksSoFar

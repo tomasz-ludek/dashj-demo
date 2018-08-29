@@ -1,6 +1,9 @@
 package org.dash.dashj.demo.ui.util
 
 import android.arch.lifecycle.ViewModelProviders
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context.CLIPBOARD_SERVICE
 import android.content.res.Resources
 import android.os.Bundle
 import android.support.design.widget.Snackbar
@@ -14,12 +17,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import kotlinx.android.synthetic.main.utils_fragment.view.*
 import org.bitcoinj.core.AddressFormatException
 import org.bitcoinj.core.DumpedPrivateKey
 import org.dash.dashj.demo.MainActivity
 import org.dash.dashj.demo.R
 import org.dash.dashj.demo.WalletManager
+import org.dash.dashj.demo.event.SyncUpdateEvent
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 
 class UtilsFragment : Fragment() {
@@ -45,35 +53,40 @@ class UtilsFragment : Fragment() {
         return layoutView
     }
 
+    override fun onStart() {
+        super.onStart()
+        EventBus.getDefault().register(this)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        EventBus.getDefault().unregister(this)
+    }
+
+    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
+    fun onSyncUpdateEvent(event: SyncUpdateEvent) {
+
+    }
+
     private fun initView() {
+        updateBalance()
+        layoutView.addressView.setOnClickListener {
+            val clipboard = activity!!.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("currentReceiveAddress", layoutView.balanceView.text)
+            clipboard.primaryClip = clip
+            Toast.makeText(activity, "address has been copied to clipboard", Toast.LENGTH_LONG).show()
+        }
         layoutView.toStringBtnView.setOnClickListener {
             val toString = walletManager.wallet.toString(true, true, true, null)
             Log.d("wallet.toString(...)", "wallet.toString(...) $toString")
         }
         layoutView.importAddressBtnView.setOnClickListener {
-            //            val keyChainGroup = walletManager.wallet.activeKeyChain
-//            val keys = RestrictedAccessUtil.invokeGetKeys(keyChainGroup, false)
-//            (RestrictedAccessUtil.invokeGetKeys(keyChainGroup, false)[0] as DeterministicKey).pathAsString
-//            val chainAsString = keyChainGroup.toString(false, walletManager.wallet.networkParameters)
-//            Log.d("chainAsString", chainAsString)
-/*
-            val wallet = walletManager.wallet
-            try {
-                val rawKey = DumpedPrivateKey.fromBase58(wallet.networkParameters, "93RLnmbkkRXinkkEknsoEaPgYDjFThT6b7KKzjaD6jYYWUYS2a1")
-                val imported = wallet.importKey(rawKey.key)
-
-                val toString = wallet.toString(true, true, true, null)
-                Log.d("wallet.toString(...)", "wallet.toString(...) {imported + $imported} $toString")
-            } catch (x: AddressFormatException) {
-                Toast.makeText(activity, x.message, Toast.LENGTH_LONG).show()
-            }
-*/
             val builder = AlertDialog.Builder(activity!!)
-            builder.setTitle("Import address")
+            builder.setTitle("Import key")
 
             val inputLayout = TextInputLayout(activity)
             val input = TextInputEditText(activity)
-            input.hint = "Address"
+            input.hint = "Key (Base58)"
             input.setText("93RLnmbkkRXinkkEknsoEaPgYDjFThT6b7KKzjaD6jYYWUYS2a1")
             inputLayout.addView(input)
 
@@ -88,6 +101,11 @@ class UtilsFragment : Fragment() {
 
             builder.show()
         }
+    }
+
+    private fun updateBalance() {
+        layoutView.balanceView.text = walletManager.wallet.balance.toFriendlyString()
+        layoutView.addressView.text = walletManager.wallet.currentReceiveAddress().toBase58()
     }
 
     private fun importKey(key: String) {
