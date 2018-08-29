@@ -25,6 +25,7 @@
     <string name="symbol_internal">⇄</string>
 
     <string name="default_empty_state_message">Synchronizing…</string>
+    <string name="connecting_state_message">Connecting…</string>
     <string name="loading_state_message">Loading…</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

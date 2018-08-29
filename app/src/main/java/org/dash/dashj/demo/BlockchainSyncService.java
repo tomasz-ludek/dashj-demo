@@ -10,6 +10,7 @@ import android.util.Log;
 
 import org.bitcoinj.core.BlockChain;
 import org.bitcoinj.core.CheckpointManager;
+import org.bitcoinj.core.Coin;
 import org.bitcoinj.core.MasternodeSync;
 import org.bitcoinj.core.MasternodeSyncListener;
 import org.bitcoinj.core.NetworkParameters;
@@ -19,6 +20,7 @@ import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.SporkMessage;
 import org.bitcoinj.core.SporkSyncListener;
 import org.bitcoinj.core.StoredBlock;
+import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.listeners.DownloadProgressTracker;
 import org.bitcoinj.core.listeners.PeerConnectedEventListener;
 import org.bitcoinj.core.listeners.PeerDisconnectedEventListener;
@@ -30,7 +32,11 @@ import org.bitcoinj.net.discovery.PeerDiscoveryException;
 import org.bitcoinj.store.BlockStore;
 import org.bitcoinj.store.BlockStoreException;
 import org.bitcoinj.store.SPVBlockStore;
+import org.bitcoinj.utils.Threading;
 import org.bitcoinj.wallet.Wallet;
+import org.bitcoinj.wallet.listeners.WalletChangeEventListener;
+import org.bitcoinj.wallet.listeners.WalletCoinsReceivedEventListener;
+import org.bitcoinj.wallet.listeners.WalletCoinsSentEventListener;
 import org.dash.dashj.demo.event.BlockListRequestEvent;
 import org.dash.dashj.demo.event.BlockListUpdateEvent;
 import org.dash.dashj.demo.event.MasternodeListUpdateEvent;
@@ -39,6 +45,7 @@ import org.dash.dashj.demo.event.PeerListUpdateEvent;
 import org.dash.dashj.demo.event.SporkListRequestEvent;
 import org.dash.dashj.demo.event.SporkListUpdateEvent;
 import org.dash.dashj.demo.event.SyncUpdateEvent;
+import org.dash.dashj.demo.event.WalletUpdateEvent;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -98,6 +105,10 @@ public class BlockchainSyncService extends Service {
         wallet.getContext().initDashSync(walletManager.getMasternodeDataPath());
 
         initPeerGroup(wallet);
+
+        wallet.addCoinsReceivedEventListener(Threading.SAME_THREAD, walletCoinsReceivedEventListener);
+        wallet.addCoinsSentEventListener(Threading.SAME_THREAD, walletCoinsSentEventListener);
+        wallet.addChangeEventListener(Threading.SAME_THREAD, walletChangeEventListener);
 
         wallet.getContext().sporkManager.addEventListener(new SporkSyncListener() {
             @Override
@@ -230,6 +241,27 @@ public class BlockchainSyncService extends Service {
         }
     };
 
+    private WalletCoinsReceivedEventListener walletCoinsReceivedEventListener = new WalletCoinsReceivedEventListener() {
+        @Override
+        public void onCoinsReceived(Wallet wallet, Transaction tx, Coin prevBalance, Coin newBalance) {
+            postWalletUpdateEvent();
+        }
+    };
+
+    private WalletCoinsSentEventListener walletCoinsSentEventListener = new WalletCoinsSentEventListener() {
+        @Override
+        public void onCoinsSent(Wallet wallet, Transaction tx, Coin prevBalance, Coin newBalance) {
+            postWalletUpdateEvent();
+        }
+    };
+
+    private WalletChangeEventListener walletChangeEventListener = new WalletChangeEventListener() {
+        @Override
+        public void onWalletChanged(Wallet wallet) {
+            postWalletUpdateEvent();
+        }
+    };
+
     @Subscribe
     public void onPeerListRequestEvent(PeerListRequestEvent event) {
         postPeerListEvent();
@@ -255,6 +287,10 @@ public class BlockchainSyncService extends Service {
 
     private void postSporkListEvent(SporkMessage spork) {
         EventBus.getDefault().post(new SporkListUpdateEvent(spork));
+    }
+
+    private void postWalletUpdateEvent() {
+        EventBus.getDefault().post(new WalletUpdateEvent());
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -295,9 +331,9 @@ public class BlockchainSyncService extends Service {
         EventBus.getDefault().unregister(this);
 
         Wallet wallet = walletManager.getWallet();
-//        wallet.removeChangeEventListener(walletEventListener);
-//        wallet.removeCoinsSentEventListener(walletEventListener);
-//        wallet.removeCoinsReceivedEventListener(walletEventListener);
+        wallet.removeChangeEventListener(walletChangeEventListener);
+        wallet.removeCoinsSentEventListener(walletCoinsSentEventListener);
+        wallet.removeCoinsReceivedEventListener(walletCoinsReceivedEventListener);
 
         if (peerGroup != null) {
             Log.d(TAG, "Stopping peergroup");

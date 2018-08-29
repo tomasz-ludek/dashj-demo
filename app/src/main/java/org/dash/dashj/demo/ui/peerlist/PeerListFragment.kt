@@ -9,7 +9,7 @@ import org.greenrobot.eventbus.EventBus
 class PeerListFragment : BaseListFragment<PeerListAdapter, PeerListViewModel>() {
 
     override val emptyStateMessageResId: Int
-        get() = R.string.default_empty_state_message
+        get() = R.string.connecting_state_message
 
     companion object {
         fun newInstance() = PeerListFragment()
@@ -29,7 +29,7 @@ class PeerListFragment : BaseListFragment<PeerListAdapter, PeerListViewModel>() 
     override fun bindViewModel(viewModel: PeerListViewModel) {
         viewModel.peerList.observe(this, Observer { peerList ->
             adapter.replace(peerList)
-            updateView(peerList != null)
+            updateView(peerList!!.isNotEmpty())
         })
 
         viewModel.hostNames.observe(this, Observer { hostNameMap ->

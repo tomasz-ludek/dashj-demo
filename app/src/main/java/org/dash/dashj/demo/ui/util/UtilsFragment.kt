@@ -23,8 +23,10 @@ import org.bitcoinj.core.AddressFormatException
 import org.bitcoinj.core.DumpedPrivateKey
 import org.dash.dashj.demo.MainActivity
 import org.dash.dashj.demo.R
+import org.dash.dashj.demo.Utils
 import org.dash.dashj.demo.WalletManager
 import org.dash.dashj.demo.event.SyncUpdateEvent
+import org.dash.dashj.demo.event.WalletUpdateEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -65,7 +67,17 @@ class UtilsFragment : Fragment() {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onSyncUpdateEvent(event: SyncUpdateEvent) {
+        updateBalance()
+        layoutView.bottomInfoView?.let {
+            val message = ("Chain download %.0f%% done\nBlocks left: ${event.blocksSoFar} (${Utils.format(event.date)})").format(event.pct)
+            it.visibility = View.VISIBLE
+            it.text = message
+        }
+    }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onWalletUpdateEvent(event: WalletUpdateEvent) {
+        updateBalance()
     }
 
     private fun initView() {
@@ -104,8 +116,12 @@ class UtilsFragment : Fragment() {
     }
 
     private fun updateBalance() {
-        layoutView.balanceView.text = walletManager.wallet.balance.toFriendlyString()
-        layoutView.addressView.text = walletManager.wallet.currentReceiveAddress().toBase58()
+        layoutView.balanceView?.let {
+            it.text = walletManager.wallet.balance.toFriendlyString()
+        }
+        layoutView.addressView?.let {
+            it.text = walletManager.wallet.currentReceiveAddress().toBase58()
+        }
     }
 
     private fun importKey(key: String) {
