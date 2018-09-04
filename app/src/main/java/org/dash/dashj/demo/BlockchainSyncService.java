@@ -11,6 +11,7 @@ import android.util.Log;
 import org.bitcoinj.core.BlockChain;
 import org.bitcoinj.core.CheckpointManager;
 import org.bitcoinj.core.Coin;
+import org.bitcoinj.core.MasternodeManagerListener;
 import org.bitcoinj.core.MasternodeSync;
 import org.bitcoinj.core.MasternodeSyncListener;
 import org.bitcoinj.core.NetworkParameters;
@@ -18,14 +19,14 @@ import org.bitcoinj.core.Peer;
 import org.bitcoinj.core.PeerGroup;
 import org.bitcoinj.core.Sha256Hash;
 import org.bitcoinj.core.SporkMessage;
-import org.bitcoinj.core.SporkSyncListener;
 import org.bitcoinj.core.StoredBlock;
 import org.bitcoinj.core.Transaction;
 import org.bitcoinj.core.listeners.DownloadProgressTracker;
 import org.bitcoinj.core.listeners.PeerConnectedEventListener;
 import org.bitcoinj.core.listeners.PeerDisconnectedEventListener;
+import org.bitcoinj.core.listeners.SporkManagerListener;
 import org.bitcoinj.governance.GovernanceObject;
-import org.bitcoinj.governance.listeners.GovernanceObjectAddedEventListener;
+import org.bitcoinj.governance.listeners.GovernanceManagerListener;
 import org.bitcoinj.net.discovery.MultiplexingDiscovery;
 import org.bitcoinj.net.discovery.PeerDiscovery;
 import org.bitcoinj.net.discovery.PeerDiscoveryException;
@@ -39,6 +40,7 @@ import org.bitcoinj.wallet.listeners.WalletCoinsReceivedEventListener;
 import org.bitcoinj.wallet.listeners.WalletCoinsSentEventListener;
 import org.dash.dashj.demo.event.BlockListRequestEvent;
 import org.dash.dashj.demo.event.BlockListUpdateEvent;
+import org.dash.dashj.demo.event.GovernanceObjectsUpdateEvent;
 import org.dash.dashj.demo.event.MasternodeListUpdateEvent;
 import org.dash.dashj.demo.event.PeerListRequestEvent;
 import org.dash.dashj.demo.event.PeerListUpdateEvent;
@@ -110,17 +112,25 @@ public class BlockchainSyncService extends Service {
         wallet.addCoinsSentEventListener(Threading.SAME_THREAD, walletCoinsSentEventListener);
         wallet.addChangeEventListener(Threading.SAME_THREAD, walletChangeEventListener);
 
-        wallet.getContext().sporkManager.addEventListener(new SporkSyncListener() {
+        wallet.getContext().sporkManager.addEventListener(new SporkManagerListener() {
             @Override
             public void onUpdate(SporkMessage spork) {
                 postSporkListEvent(spork);
             }
         });
 
-        wallet.getContext().governanceManager.addGovernanceObjectAddedEventListener(new GovernanceObjectAddedEventListener() {
+        wallet.getContext().governanceManager.addEventListener(new GovernanceManagerListener() {
             @Override
             public void onGovernanceObjectAdded(Sha256Hash nHash, GovernanceObject object) {
+                EventBus.getDefault().post(new GovernanceObjectsUpdateEvent());
                 Log.d(TAG, "onGovernanceObjectAdded: " + object);
+            }
+        });
+
+        wallet.getContext().masternodeManager.addEventListener(new MasternodeManagerListener() {
+            @Override
+            public void onMasternodeCountChanged(int newCount) {
+
             }
         });
 

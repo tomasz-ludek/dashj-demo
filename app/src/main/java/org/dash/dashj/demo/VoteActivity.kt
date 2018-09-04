@@ -77,7 +77,7 @@ class VoteActivity : AppCompatActivity() {
         }
 
         val control = MasternodeControl(org.bitcoinj.core.Context.get(), null as File?)
-        control.masternodeConfig.add("masternode", ipPort, masternodePrivKey, collateralTxid, collateralIndex)
+        control.addConfig("masternode", ipPort, masternodePrivKey, collateralTxid, collateralIndex)
 
         val error = StringBuilder()
         val broadcast = control.voteAlias("masternode", proposalHash, "funding", voteOutcome, error)

@@ -50,7 +50,7 @@ class SporkListAdapter(context: Context, sporkManager: SporkManager) : RecyclerV
 
     override fun onBindViewHolder(holder: SporkViewHolder, position: Int) {
         val spork = getItem(position)
-        val isActive = sporkManager.isSporkActive(spork)
+        val isActive = sporkManager.isSporkActive(spork.sporkID)
         holder.bind(spork, isActive)
     }
 }
