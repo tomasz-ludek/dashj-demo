@@ -1,13 +1,12 @@
 package org.dash.dashj.demo.ui.sporklist
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModel
-import org.bitcoinj.core.SporkMessage
+import android.app.Application
+import android.arch.lifecycle.AndroidViewModel
+import org.dashj.dashjinterface.data.SporksLiveData
 
-class SporkListViewModel : ViewModel() {
+class SporkListViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _sporkList = SporkListLiveData()
-
-    val sporkList: LiveData<List<SporkMessage>>
+    private val _sporkList = SporksLiveData(application)
+    val sporkList: SporksLiveData
         get() = _sporkList
 }

@@ -1,4 +1,4 @@
-package org.dash.dashj.demo.ui.masternodelist
+package org.dash.dashj.demo.ui.governancelist
 
 import android.arch.lifecycle.Observer
 import android.support.v7.app.AppCompatActivity
@@ -9,11 +9,8 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Filterable
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.WalletManager
 import org.dash.dashj.demo.event.GovernanceObjectsUpdateEvent
 import org.dash.dashj.demo.ui.BaseListFragment
-import org.dash.dashj.demo.ui.governancelist.GovernanceListAdapter
-import org.dash.dashj.demo.ui.governancelist.GovernanceListViewModel
 import org.greenrobot.eventbus.EventBus
 
 class GovernanceListFragment : BaseListFragment<GovernanceListAdapter, GovernanceListViewModel>() {
@@ -30,8 +27,7 @@ class GovernanceListFragment : BaseListFragment<GovernanceListAdapter, Governanc
     override fun viewModelType(): Class<GovernanceListViewModel> = GovernanceListViewModel::class.java
 
     override fun createAdapter(): GovernanceListAdapter {
-        val governanceManager = WalletManager.getInstance().wallet.context.governanceManager
-        return GovernanceListAdapter(context!!, governanceManager)
+        return GovernanceListAdapter(context!!)
     }
 
     override fun onResume() {

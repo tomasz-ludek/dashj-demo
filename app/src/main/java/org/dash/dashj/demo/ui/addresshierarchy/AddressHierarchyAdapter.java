@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import org.bitcoinj.core.ECKey;
-import org.bitcoinj.wallet.Wallet;
+import org.bitcoinj.core.NetworkParameters;
 import org.dash.dashj.demo.R;
 
 import java.util.ArrayList;
@@ -17,14 +17,11 @@ import java.util.List;
 public class AddressHierarchyAdapter extends RecyclerView.Adapter<AddressHierarchyViewHolder> {
 
     private final LayoutInflater inflater;
-
-    private final Wallet wallet;
-
     private final List<ECKey> addressList = new ArrayList<>();
+    private NetworkParameters networkParameters;
 
-    public AddressHierarchyAdapter(final Context context, Wallet wallet) {
+    public AddressHierarchyAdapter(final Context context) {
         inflater = LayoutInflater.from(context);
-        this.wallet = wallet;
 
         setHasStableIds(true);
     }
@@ -35,9 +32,10 @@ public class AddressHierarchyAdapter extends RecyclerView.Adapter<AddressHierarc
         notifyDataSetChanged();
     }
 
-    public void replace(final Collection<ECKey> blocks) {
+    public void replace(final Collection<ECKey> ecKeys, NetworkParameters networkParameters) {
         this.addressList.clear();
-        this.addressList.addAll(blocks);
+        this.addressList.addAll(ecKeys);
+        this.networkParameters = networkParameters;
 
         notifyDataSetChanged();
     }
@@ -65,6 +63,6 @@ public class AddressHierarchyAdapter extends RecyclerView.Adapter<AddressHierarc
     @Override
     public void onBindViewHolder(@NonNull final AddressHierarchyViewHolder holder, final int position) {
         final ECKey key = getItem(position);
-        holder.bind(key, wallet);
+        holder.bind(key, networkParameters);
     }
 }

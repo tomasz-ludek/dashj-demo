@@ -5,15 +5,15 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import org.bitcoinj.core.Transaction
+import org.bitcoinj.wallet.Wallet
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.WalletManager
 import java.util.*
 
 class TransactionListAdapter(context: Context) : RecyclerView.Adapter<TransactionViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private val transactions = LinkedList<Transaction>()
-    private val walletManager = WalletManager.getInstance()
+    private lateinit var wallet: Wallet
 
     init {
         setHasStableIds(true)
@@ -24,9 +24,10 @@ class TransactionListAdapter(context: Context) : RecyclerView.Adapter<Transactio
         notifyDataSetChanged()
     }
 
-    fun replace(transactions: List<Transaction>?) {
+    fun replace(transactions: List<Transaction>?, wallet: Wallet) {
         this.transactions.clear()
         transactions?.let { this.transactions.addAll(it) }
+        this.wallet = wallet
 
         notifyDataSetChanged()
     }
@@ -50,6 +51,6 @@ class TransactionListAdapter(context: Context) : RecyclerView.Adapter<Transactio
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val transaction = getItem(position)
-        holder.bind(transaction, walletManager.wallet)
+        holder.bind(transaction, wallet)
     }
 }

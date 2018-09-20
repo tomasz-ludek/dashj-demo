@@ -1,18 +1,16 @@
 package org.dash.dashj.demo.ui.peerlist
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModel
-import org.bitcoinj.core.Peer
-import java.net.InetAddress
+import android.app.Application
+import android.arch.lifecycle.AndroidViewModel
+import org.dashj.dashjinterface.data.PeerConnectivityLiveData
 
-class PeerListViewModel : ViewModel() {
+class PeerListViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _peerList = PeerListLiveData()
+    private val _peerConnectivity = PeerConnectivityLiveData(application)
+    val peerConnectivity: PeerConnectivityLiveData
+        get() = _peerConnectivity
+
     private val _hostNameMap = ReverseDnsLiveData()
-
-    val peerList: LiveData<List<Peer>>
-        get() = _peerList
-
-    val hostNames: LiveData<Map<InetAddress, String>>
+    val hostNames: ReverseDnsLiveData
         get() = _hostNameMap
 }

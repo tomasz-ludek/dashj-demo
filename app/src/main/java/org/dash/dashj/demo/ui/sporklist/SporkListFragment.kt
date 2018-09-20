@@ -2,7 +2,6 @@ package org.dash.dashj.demo.ui.sporklist
 
 import android.arch.lifecycle.Observer
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.WalletManager
 import org.dash.dashj.demo.event.SporkListRequestEvent
 import org.dash.dashj.demo.ui.BaseListFragment
 import org.greenrobot.eventbus.EventBus
@@ -19,8 +18,7 @@ class SporkListFragment : BaseListFragment<SporkListAdapter, SporkListViewModel>
     override fun viewModelType(): Class<SporkListViewModel> = SporkListViewModel::class.java
 
     override fun createAdapter(): SporkListAdapter {
-        val sporkManager = WalletManager.getInstance().wallet.context.sporkManager
-        return SporkListAdapter(context!!, sporkManager)
+        return SporkListAdapter(context!!)
     }
 
     override fun initView() {
@@ -29,12 +27,12 @@ class SporkListFragment : BaseListFragment<SporkListAdapter, SporkListViewModel>
     }
 
     override fun bindViewModel(viewModel: SporkListViewModel) {
-        viewModel.sporkList.observe(this, Observer { sporkList ->
-            sporkList?.let {
-                adapter.replace(sporkList)
-                updateView(it.isNotEmpty())
-                setInfo("Sporks count: ${it.size}")
-            }
+        viewModel.sporkList.observe(this, Observer {
+            val sporks = it!!.sporks
+            val active = it.active
+            adapter.replace(sporks, active)
+            updateView(sporks.isNotEmpty())
+            setInfo("Sporks count: ${sporks.size}")
         })
     }
 

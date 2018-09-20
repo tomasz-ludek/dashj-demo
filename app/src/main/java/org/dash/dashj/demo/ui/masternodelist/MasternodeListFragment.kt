@@ -9,7 +9,6 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Filterable
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.WalletManager
 import org.dash.dashj.demo.event.MasternodeListUpdateEvent
 import org.dash.dashj.demo.ui.BaseListFragment
 import org.greenrobot.eventbus.EventBus
@@ -28,8 +27,7 @@ class MasternodeListFragment : BaseListFragment<MasternodeListAdapter, Masternod
     override fun viewModelType(): Class<MasternodeListViewModel> = MasternodeListViewModel::class.java
 
     override fun createAdapter(): MasternodeListAdapter {
-        val masternodeManager = WalletManager.getInstance().wallet.context.masternodeManager
-        return MasternodeListAdapter(context!!, masternodeManager)
+        return MasternodeListAdapter(context!!)
     }
 
     override fun onResume() {

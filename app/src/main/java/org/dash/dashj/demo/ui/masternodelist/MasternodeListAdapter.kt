@@ -7,20 +7,17 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import org.bitcoinj.core.Masternode
-import org.bitcoinj.core.MasternodeManager
 import org.dash.dashj.demo.R
 
-class MasternodeListAdapter(context: Context, masternodeManager: MasternodeManager)
+class MasternodeListAdapter(context: Context)
     : RecyclerView.Adapter<MasternodeViewHolder>(), Filterable {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private val masternodes = mutableListOf<Masternode>()
     private val refMasternodes = mutableListOf<Masternode>()
-    private var masternodeManager: MasternodeManager
 
     init {
         setHasStableIds(true)
-        this.masternodeManager = masternodeManager
     }
 
     fun clear() {

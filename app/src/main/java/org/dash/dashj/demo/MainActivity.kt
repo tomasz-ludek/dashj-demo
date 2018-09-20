@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.main_activity.*
 import kotlinx.android.synthetic.main.main_app_bar.*
 import org.dash.dashj.demo.ui.addresshierarchy.AddressHierarchyFragment
 import org.dash.dashj.demo.ui.blocklist.BlockListFragment
-import org.dash.dashj.demo.ui.masternodelist.GovernanceListFragment
+import org.dash.dashj.demo.ui.governancelist.GovernanceListFragment
 import org.dash.dashj.demo.ui.masternodelist.MasternodeListFragment
 import org.dash.dashj.demo.ui.peerlist.PeerListFragment
 import org.dash.dashj.demo.ui.transactionlist.TransactionListFragment
@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .commitNow()
         }
 
-        walletManager = WalletManager.getInstance()
+//        walletManager = WalletManager.getInstance()
         initDrawer()
     }
 
@@ -64,6 +64,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             switchWallet(Constants.WALLET_TESTNET3_NAME)
         }
 
+        headerView.findViewById<View>(R.id.draDevnetActionView).setOnClickListener {
+            switchWallet(Constants.WALLET_SEED_DEVNET_DRA_NAME)
+        }
+
         headerView.findViewById<View>(R.id.dummyTestnetActionView).setOnClickListener {
             switchWallet(Constants.WALLET_SEED_TESTNET3_NAME)
         }
@@ -73,7 +77,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             expandWalletsView(walletsListView.visibility == View.GONE)
         }
 
-        headerView.findViewById<TextView>(R.id.activeWalletView).text = walletManager.configName
+//        headerView.findViewById<TextView>(R.id.activeWalletView).text = walletManager.configName
     }
 
     private fun expandWalletsView(expand: Boolean) {

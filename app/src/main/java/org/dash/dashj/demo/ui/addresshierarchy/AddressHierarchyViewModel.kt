@@ -1,13 +1,12 @@
 package org.dash.dashj.demo.ui.addresshierarchy
 
-import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModel
-import org.bitcoinj.core.ECKey
+import android.app.Application
+import android.arch.lifecycle.AndroidViewModel
+import org.dashj.dashjinterface.data.KeyChainLiveData
 
-class AddressHierarchyViewModel : ViewModel() {
+class AddressHierarchyViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _kayList = AddressHierarchyLiveData()
-
-    val keyList: LiveData<List<ECKey>>
-        get() = _kayList
+    private val _keyChain = KeyChainLiveData(application)
+    val keyChain: KeyChainLiveData
+        get() = _keyChain
 }

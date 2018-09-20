@@ -24,19 +24,17 @@ import javax.annotation.Nullable;
 
 public class BlockListAdapter extends RecyclerView.Adapter<BlockViewHolder> {
 
-    private final Wallet wallet;
     private final LayoutInflater inflater;
+    private Wallet wallet;
     @Nullable
     private final OnClickListener onClickListener;
-
     private MonetaryFormat format;
 
     private final List<StoredBlock> blocks = new ArrayList<>();
     private Set<Transaction> transactions = new HashSet<>();
 
-    public BlockListAdapter(final Context context, final Wallet wallet, final @Nullable OnClickListener onClickListener) {
+    public BlockListAdapter(final Context context, final @Nullable OnClickListener onClickListener) {
         inflater = LayoutInflater.from(context);
-        this.wallet = wallet;
         this.onClickListener = onClickListener;
 
         setHasStableIds(true);
@@ -54,9 +52,10 @@ public class BlockListAdapter extends RecyclerView.Adapter<BlockViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void replace(final Collection<StoredBlock> blocks) {
+    public void replace(final Collection<StoredBlock> blocks, final Wallet wallet) {
         this.blocks.clear();
         this.blocks.addAll(blocks);
+        this.wallet = wallet;
 
         notifyDataSetChanged();
     }

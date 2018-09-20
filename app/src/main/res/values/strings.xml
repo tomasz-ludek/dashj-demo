@@ -11,7 +11,7 @@
     <string name="fragment_address_hierarchy_title">Address Hierarchy</string>
 
     <string name="fragment_peer_list_empty">No peers connected</string>
-    <string name="peer_list_row_host_name_unknown">unknown</string>
+    <string name="peer_list_row_host_name_unknown">N/A</string>
     <string name="peer_list_row_ping_time">⇆ %d&#x2009;ms</string>
     <string name="peer_list_row_blocks">%d blocks</string>
     <string name="peer_list_row_protocol">protocol: %d</string>
@@ -25,7 +25,7 @@
     <string name="symbol_internal">⇄</string>
 
     <string name="default_empty_state_message">Synchronizing…</string>
-    <string name="connecting_state_message">Connecting…</string>
+    <string name="connecting_state_message">Connecting to Dash network…</string>
     <string name="loading_state_message">Loading…</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>

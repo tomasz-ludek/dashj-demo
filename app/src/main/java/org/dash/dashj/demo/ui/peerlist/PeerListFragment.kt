@@ -27,9 +27,10 @@ class PeerListFragment : BaseListFragment<PeerListAdapter, PeerListViewModel>() 
     }
 
     override fun bindViewModel(viewModel: PeerListViewModel) {
-        viewModel.peerList.observe(this, Observer { peerList ->
-            adapter.replace(peerList)
-            updateView(peerList!!.isNotEmpty())
+        viewModel.peerConnectivity.observe(this, Observer {
+            adapter.replace(it)
+            viewModel.hostNames.fire(it)
+            updateView(it!!.isNotEmpty())
         })
 
         viewModel.hostNames.observe(this, Observer { hostNameMap ->

@@ -1,5 +1,6 @@
 package org.dash.dashj.demo.ui.util
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -21,15 +22,14 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.utils_fragment.view.*
 import org.bitcoinj.core.AddressFormatException
 import org.bitcoinj.core.DumpedPrivateKey
-import org.dash.dashj.demo.MainActivity
 import org.dash.dashj.demo.R
 import org.dash.dashj.demo.Utils
 import org.dash.dashj.demo.WalletManager
 import org.dash.dashj.demo.event.SyncUpdateEvent
-import org.dash.dashj.demo.event.WalletUpdateEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.util.*
 
 
 class UtilsFragment : Fragment() {
@@ -46,13 +46,33 @@ class UtilsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        walletManager = WalletManager.getInstance()
+//        walletManager = WalletManager.getInstance()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         layoutView = inflater.inflate(R.layout.utils_fragment, container, false)
         initView()
         return layoutView
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        viewModel = ViewModelProviders.of(this).get(UtilsViewModel::class.java)
+        viewModel.walletInfo.observe(this, Observer {
+            layoutView.balanceView.text = it!!.balance.toFriendlyString()
+            layoutView.addressView.text = it.currentReceiveAddress.toBase58()
+        })
+        viewModel.blockchainState.observe(this, Observer {
+            val message = when {
+                it!!.blocksLeft == 0 -> "Blockchain synced (${Utils.format(Date())})"
+                else -> "Best chain date: ${Utils.format(it.bestChainDate)} (${it.bestChainHeight})\nBlocks left: ${it.blocksLeft}"
+            }
+            layoutView.bottomInfoView.visibility = View.VISIBLE
+            layoutView.bottomInfoView.text = message
+            //Snackbar.make(layoutView, message, Snackbar.LENGTH_LONG).setAction("Action", null).show()
+        })
+        activity!!.setTitle(R.string.fragment_utils_title)
+//        (activity as MainActivity).setSubTitle(WalletManager.getInstance().configName)
     }
 
     override fun onStart() {
@@ -67,7 +87,6 @@ class UtilsFragment : Fragment() {
 
     @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
     fun onSyncUpdateEvent(event: SyncUpdateEvent) {
-        updateBalance()
         layoutView.bottomInfoView?.let {
             val message = ("Chain download %.0f%% done\nBlocks left: ${event.blocksSoFar} (${Utils.format(event.date)})").format(event.pct)
             it.visibility = View.VISIBLE
@@ -75,13 +94,7 @@ class UtilsFragment : Fragment() {
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onWalletUpdateEvent(event: WalletUpdateEvent) {
-        updateBalance()
-    }
-
     private fun initView() {
-        updateBalance()
         layoutView.addressView.setOnClickListener {
             val clipboard = activity!!.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
             val clip = ClipData.newPlainText("currentReceiveAddress", layoutView.balanceView.text)
@@ -115,15 +128,6 @@ class UtilsFragment : Fragment() {
         }
     }
 
-    private fun updateBalance() {
-        layoutView.balanceView?.let {
-            it.text = walletManager.wallet.balance.toFriendlyString()
-        }
-        layoutView.addressView?.let {
-            it.text = walletManager.wallet.currentReceiveAddress().toBase58()
-        }
-    }
-
     private fun importKey(key: String) {
         if (TextUtils.isEmpty(key)) {
             Snackbar.make(layoutView, "Key cannot be empty", Snackbar.LENGTH_LONG).show()
@@ -149,13 +153,4 @@ class UtilsFragment : Fragment() {
     private fun dpToPx(dp: Int): Int {
         return (dp * Resources.getSystem().displayMetrics.density).toInt()
     }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProviders.of(this).get(UtilsViewModel::class.java)
-
-        activity!!.setTitle(R.string.fragment_utils_title)
-        (activity as MainActivity).setSubTitle(WalletManager.getInstance().configName)
-    }
-
 }

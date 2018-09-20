@@ -2,7 +2,6 @@ package org.dash.dashj.demo.ui.blocklist
 
 import android.arch.lifecycle.Observer
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.WalletManager
 import org.dash.dashj.demo.event.BlockListRequestEvent
 import org.dash.dashj.demo.ui.BaseListFragment
 import org.greenrobot.eventbus.EventBus
@@ -20,7 +19,7 @@ class BlockListFragment : BaseListFragment<BlockListAdapter, BlockListViewModel>
     override fun viewModelType(): Class<BlockListViewModel> = BlockListViewModel::class.java
 
     override fun createAdapter(): BlockListAdapter {
-        return BlockListAdapter(activity, WalletManager.getInstance().wallet, null)
+        return BlockListAdapter(activity, null)
     }
 
     override fun initView() {
@@ -29,14 +28,16 @@ class BlockListFragment : BaseListFragment<BlockListAdapter, BlockListViewModel>
     }
 
     override fun bindViewModel(viewModel: BlockListViewModel) {
-        viewModel.blockList.observe(this, Observer { blockList ->
-            adapter.replace(blockList)
-            updateView(blockList != null)
+        viewModel.blockList.observe(this, Observer { data ->
+            data?.run {
+                adapter.replace(blocks, wallet)
+                updateView(true)
+                setInfo("Blocks count: ${blocks.size}")
+            }
         })
-
-        viewModel.transactionSet.observe(this, Observer { transactionSet ->
-            adapter.replaceTransactions(transactionSet)
-        })
+//        viewModel.transactionSet.observe(this, Observer { transactionSet ->
+//            adapter.replaceTransactions(transactionSet)
+//        })
     }
 
     override fun onRefresh() {

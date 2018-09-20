@@ -7,6 +7,7 @@ public interface Constants {
     String WALLET_TESTNET3_NAME = "testnet";
     String WALLET_SEED_TESTNET3_NAME = "dummy-testnet";
     String WALLET_MAINNET_NAME = "mainnet";
+    String WALLET_SEED_DEVNET_DRA_NAME = "dummy-devnet-dra";
 
     String WALLET_FILE_EXT = ".wallet";
     String BLOCKCHAIN_FILE_EXT = ".blockchain";

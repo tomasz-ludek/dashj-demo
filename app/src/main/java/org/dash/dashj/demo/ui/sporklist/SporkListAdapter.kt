@@ -4,19 +4,17 @@ import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import org.bitcoinj.core.SporkManager
 import org.bitcoinj.core.SporkMessage
 import org.dash.dashj.demo.R
 
-class SporkListAdapter(context: Context, sporkManager: SporkManager) : RecyclerView.Adapter<SporkViewHolder>() {
+class SporkListAdapter(context: Context) : RecyclerView.Adapter<SporkViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private val sporks = mutableListOf<SporkMessage>()
-    private var sporkManager: SporkManager
+    private val active = mutableSetOf<SporkMessage>()
 
     init {
         setHasStableIds(true)
-        this.sporkManager = sporkManager
     }
 
     fun clear() {
@@ -24,10 +22,13 @@ class SporkListAdapter(context: Context, sporkManager: SporkManager) : RecyclerV
         notifyDataSetChanged()
     }
 
-    fun replace(peers: List<SporkMessage>?) {
+    fun replace(sporks: List<SporkMessage>?, active: Set<SporkMessage>) {
         this.sporks.clear()
-        peers?.let { this.sporks.addAll(it) }
-
+        this.active.clear()
+        sporks?.also {
+            this.sporks.addAll(it)
+            this.active.addAll(active)
+        }
         notifyDataSetChanged()
     }
 
@@ -50,7 +51,7 @@ class SporkListAdapter(context: Context, sporkManager: SporkManager) : RecyclerV
 
     override fun onBindViewHolder(holder: SporkViewHolder, position: Int) {
         val spork = getItem(position)
-        val isActive = sporkManager.isSporkActive(spork.sporkID)
+        val isActive = active.contains(spork)
         holder.bind(spork, isActive)
     }
 }

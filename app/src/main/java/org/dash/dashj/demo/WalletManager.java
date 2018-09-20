@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableList;
 import org.bitcoinj.core.Context;
 import org.bitcoinj.core.NetworkParameters;
 import org.bitcoinj.crypto.ChildNumber;
+import org.bitcoinj.params.DevNetParams;
 import org.bitcoinj.params.MainNetParams;
 import org.bitcoinj.params.TestNet3Params;
 import org.bitcoinj.wallet.DeterministicKeyChain;
@@ -15,6 +16,7 @@ import org.bitcoinj.wallet.DeterministicSeed;
 import org.bitcoinj.wallet.KeyChainGroup;
 import org.bitcoinj.wallet.Wallet;
 import org.dash.dashj.demo.event.WalletReloadEvent;
+import org.dashj.dashjinterface.WalletAppKitService;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
@@ -22,7 +24,6 @@ import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class WalletManager {
 
@@ -68,6 +69,16 @@ public class WalletManager {
         }
         walletConfigMap.put(Constants.WALLET_SEED_TESTNET3_NAME, testnetSeedWallet);
 
+        String[] dnsSeeds = {"54.255.164.83", "52.77.231.13", "13.250.14.191"};
+        DevNetParams draDevNetParams = DevNetParams.get("DRA", "yPhZ6EKNntpLDZBovHd1xAYjfwYmrBMT5N", 12999, dnsSeeds);
+        WalletConfig draDevnetSeedWallet = new WalletConfig(application, Constants.WALLET_SEED_DEVNET_DRA_NAME, draDevNetParams);
+        if (!draDevnetSeedWallet.exists()) {
+            String[] dummySeed = new String[]{"erode", "bridge", "organ", "you", "often", "teach", "desert", "thrive", "spike", "pottery", "sight", "sport"};
+            Wallet wallet = createWallet(draDevnetSeedWallet, Arrays.asList(dummySeed));
+            draDevnetSeedWallet.create(wallet);
+        }
+        walletConfigMap.put(Constants.WALLET_SEED_DEVNET_DRA_NAME, draDevnetSeedWallet);
+
         setActiveWallet(walletName, application);
         Log.d("FreshReceiveAddress", walletConfig.getWallet().freshReceiveAddress().toBase58());
         Log.d("FreshReceiveAddress", walletConfig.getWallet().toString(true, true, true, null));
@@ -83,7 +94,7 @@ public class WalletManager {
     }
 
     private void setActiveWallet(WalletConfig newWalletConfig, android.content.Context context) {
-        Intent blockchainSyncServiceIntent = new Intent(context, BlockchainSyncService.class);
+        Intent blockchainSyncServiceIntent = new Intent(context, WalletAppKitService.class);
         if (walletConfig != null) {
             walletConfig.saveWallet();
 //            Wallet wallet = walletConfig.getWallet();

@@ -6,21 +6,18 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import org.bitcoinj.governance.GovernanceManager
 import org.bitcoinj.governance.GovernanceObject
 import org.dash.dashj.demo.R
 
-class GovernanceListAdapter(context: Context, governanceManager: GovernanceManager)
+class GovernanceListAdapter(context: Context)
     : RecyclerView.Adapter<GovernanceViewHolder>(), Filterable {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private val governanceObjects = mutableListOf<GovernanceObject>()
     private val refGovernanceObjects = mutableListOf<GovernanceObject>()
-    private var governanceManager: GovernanceManager
 
     init {
         setHasStableIds(true)
-        this.governanceManager = governanceManager
     }
 
     fun clear() {

@@ -27,9 +27,9 @@ class TransactionListFragment : BaseListFragment<TransactionListAdapter, Transac
     }
 
     override fun bindViewModel(viewModel: TransactionListViewModel) {
-        viewModel.transactionList.observe(this, Observer { transactionList ->
-            adapter.replace(transactionList)
-            updateView(transactionList != null)
+        viewModel.transactions.observe(this, Observer {
+            adapter.replace(it!!.transactions, it.wallet)
+            updateView(true)
         })
     }
 

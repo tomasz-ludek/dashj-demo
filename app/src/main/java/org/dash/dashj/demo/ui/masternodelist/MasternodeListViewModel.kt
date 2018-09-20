@@ -1,16 +1,14 @@
 package org.dash.dashj.demo.ui.masternodelist
 
+import android.app.Application
+import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
-import android.arch.lifecycle.ViewModel
 import org.bitcoinj.core.Masternode
+import org.dashj.dashjinterface.data.MasternodesLiveData
 
-class MasternodeListViewModel : ViewModel() {
+class MasternodeListViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val _masternodeList = MasternodeListLiveData()
-
+    private val _masternodeList = MasternodesLiveData(application)
     val masternodeList: LiveData<List<Masternode>>
         get() = _masternodeList
-
-    val latestSyncStatus: Int
-        get() = _masternodeList.latestSyncStatus
 }
