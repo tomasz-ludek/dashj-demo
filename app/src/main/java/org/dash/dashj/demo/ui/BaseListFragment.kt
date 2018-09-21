@@ -79,8 +79,8 @@ abstract class BaseListFragment<T : RecyclerView.Adapter<out RecyclerView.ViewHo
     protected open fun bindBaseViewModel() {
         baseViewModel.blockchainState.observe(this, Observer {
             val message = when {
-                it!!.blocksLeft == 0 -> "Blockchain synced (${Utils.format(Date())})"
-                else -> "Best chain date: ${Utils.format(it.bestChainDate)} (${it.bestChainHeight})\nBlocks left: ${it.blocksLeft}"
+                it!!.blocksLeft > 0 -> "Best chain date: ${Utils.format(it.bestChainDate)} (${it.bestChainHeight})\nBlocks left: ${it.blocksLeft}"
+                else -> "Blockchain synced (${Utils.format(Date())})"
             }
             layoutView.bottomInfoView.visibility = View.VISIBLE
             layoutView.bottomInfoView.text = message

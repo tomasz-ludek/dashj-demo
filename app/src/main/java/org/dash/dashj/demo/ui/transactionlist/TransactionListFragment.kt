@@ -30,6 +30,7 @@ class TransactionListFragment : BaseListFragment<TransactionListAdapter, Transac
         viewModel.transactions.observe(this, Observer {
             adapter.replace(it!!.transactions, it.wallet)
             updateView(true)
+            setInfo("Transactions count: ${it.transactions.size}")
         })
     }
 

@@ -59,7 +59,9 @@ class UtilsFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(UtilsViewModel::class.java)
         viewModel.walletInfo.observe(this, Observer {
-            layoutView.balanceView.text = it!!.balance.toFriendlyString()
+            layoutView.walletView.text = it!!.walletName
+            layoutView.networkView.text = it.networkParameters.javaClass.simpleName
+            layoutView.balanceView.text = it.balance.toFriendlyString()
             layoutView.addressView.text = it.currentReceiveAddress.toBase58()
         })
         viewModel.blockchainState.observe(this, Observer {

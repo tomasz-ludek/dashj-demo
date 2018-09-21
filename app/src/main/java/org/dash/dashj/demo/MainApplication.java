@@ -1,15 +1,21 @@
 package org.dash.dashj.demo;
 
 import android.app.Application;
-import android.util.Log;
 
-import org.bitcoinj.crypto.LinuxSecureRandom;
 import org.bitcoinj.utils.Threading;
 import org.dashj.dashjinterface.WalletAppKitService;
+import org.dashj.dashjinterface.config.DevNetDraConfig;
+import org.dashj.dashjinterface.config.DevNetDraDummyConfig;
+import org.dashj.dashjinterface.config.MainNetConfig;
+import org.dashj.dashjinterface.config.TestNetConfig;
+import org.dashj.dashjinterface.config.TestNetDummyConfig;
+import org.dashj.dashjinterface.config.WalletConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
@@ -23,24 +29,36 @@ public class MainApplication extends Application {
 
     private static final String TAG = MainApplication.class.getCanonicalName();
 
-    private static final int SYNC_BLOCKCHAIN_JOB_ID = 0x0100;
+    public static Map<String, WalletConfig> walletConfigMap = new LinkedHashMap<>();
+
+    static {
+        walletConfigMap.put(MainNetConfig.NAME, MainNetConfig.get());
+        walletConfigMap.put(TestNetConfig.NAME, TestNetConfig.get());
+        walletConfigMap.put(DevNetDraConfig.NAME, DevNetDraConfig.get());
+        walletConfigMap.put(TestNetDummyConfig.NAME, TestNetDummyConfig.get());
+        walletConfigMap.put(DevNetDraDummyConfig.NAME, DevNetDraDummyConfig.get());
+    }
 
     @Override
     public void onCreate() {
         super.onCreate();
 
 //        initLogging();
-        Log.d(TAG, getString(R.string.app_name) + " started");
-
-        new LinuxSecureRandom(); // init proper random number generator
 
         Threading.throwOnLockCycles();
         org.bitcoinj.core.Context.enableStrictMode();
 
-//        MainPreferences preferences = new MainPreferences(this);
-//        WalletManager.initialize(this, preferences.getLatestConfigName());
+        MainPreferences preferences = new MainPreferences(this);
+        activateConfig(preferences.getLatestConfigName());
+    }
 
-        WalletAppKitService.init(this);
+    private void activateConfig(final String walletName) {
+        if (walletConfigMap.containsKey(walletName)) {
+            WalletConfig walletConfig = walletConfigMap.get(walletName);
+            WalletAppKitService.init(this, walletConfig);
+        } else {
+            throw new IllegalArgumentException("Unknown wallet " + walletName);
+        }
     }
 
     private void initLogging() {

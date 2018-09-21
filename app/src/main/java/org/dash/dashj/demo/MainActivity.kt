@@ -1,5 +1,7 @@
 package org.dash.dashj.demo
 
+import android.app.ActivityOptions
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
@@ -17,19 +19,27 @@ import org.dash.dashj.demo.ui.blocklist.BlockListFragment
 import org.dash.dashj.demo.ui.governancelist.GovernanceListFragment
 import org.dash.dashj.demo.ui.masternodelist.MasternodeListFragment
 import org.dash.dashj.demo.ui.peerlist.PeerListFragment
-import org.dash.dashj.demo.ui.transactionlist.TransactionListFragment
 import org.dash.dashj.demo.ui.sporklist.SporkListFragment
+import org.dash.dashj.demo.ui.transactionlist.TransactionListFragment
 import org.dash.dashj.demo.ui.util.UtilsFragment
+import org.dashj.dashjinterface.WalletAppKitService
+import org.dashj.dashjinterface.config.DevNetDraConfig
+import org.dashj.dashjinterface.config.MainNetConfig
+import org.dashj.dashjinterface.config.TestNetConfig
+import org.dashj.dashjinterface.config.TestNetDummyConfig
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var headerView: View
-    private lateinit var walletManager: WalletManager
+    private lateinit var preferences: MainPreferences
+
+    private var stopServiceWhenOnStop = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         setSupportActionBar(toolbar)
+        preferences = MainPreferences(this)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -37,7 +47,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     .commitNow()
         }
 
-//        walletManager = WalletManager.getInstance()
         initDrawer()
     }
 
@@ -57,19 +66,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
 
         headerView.findViewById<View>(R.id.mainnetActionView).setOnClickListener {
-            switchWallet(Constants.WALLET_MAINNET_NAME)
+            switchWallet(MainNetConfig.NAME)
         }
 
         headerView.findViewById<View>(R.id.testnetActionView).setOnClickListener {
-            switchWallet(Constants.WALLET_TESTNET3_NAME)
+            switchWallet(TestNetConfig.NAME)
         }
 
         headerView.findViewById<View>(R.id.draDevnetActionView).setOnClickListener {
-            switchWallet(Constants.WALLET_SEED_DEVNET_DRA_NAME)
+            switchWallet(DevNetDraConfig.NAME)
         }
 
         headerView.findViewById<View>(R.id.dummyTestnetActionView).setOnClickListener {
-            switchWallet(Constants.WALLET_SEED_TESTNET3_NAME)
+            switchWallet(TestNetDummyConfig.NAME)
         }
 
         headerView.findViewById<View>(R.id.showWalletsView).setOnClickListener {
@@ -77,7 +86,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             expandWalletsView(walletsListView.visibility == View.GONE)
         }
 
-//        headerView.findViewById<TextView>(R.id.activeWalletView).text = walletManager.configName
+        headerView.findViewById<TextView>(R.id.activeWalletView).text = preferences.latestConfigName
     }
 
     private fun expandWalletsView(expand: Boolean) {
@@ -94,12 +103,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun switchWallet(walletName: String) {
-        val preferences = MainPreferences(this)
         preferences.latestConfigName = walletName
-        walletManager.setActiveWallet(walletName, this)
-        switchFragment(R.id.nav_peers)
-        nav_view.setCheckedItem(R.id.nav_peers)
-        headerView.findViewById<TextView>(R.id.activeWalletView).text = walletName
+        stopServiceWhenOnStop = true
+        val options = ActivityOptions.makeCustomAnimation(this, android.R.anim.fade_in, android.R.anim.fade_out)
+        startActivity(Intent(this, SplashActivity::class.java), options.toBundle())
+        finish()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (stopServiceWhenOnStop) {
+            WalletAppKitService.stop(this)
+        }
     }
 
     fun setSubTitle(title: CharSequence?) {

@@ -26,11 +26,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".VoteActivity"
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
+
+        <activity android:name=".SplashActivity" />
 
         <service android:name="org.dashj.dashjinterface.WalletAppKitService" />
 

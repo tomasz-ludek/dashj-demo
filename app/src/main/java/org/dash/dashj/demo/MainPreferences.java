@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import org.dashj.dashjinterface.config.TestNetDummyConfig;
+
 public class MainPreferences {
 
     public class Contract {
@@ -21,6 +23,6 @@ public class MainPreferences {
     }
 
     public String getLatestConfigName() {
-        return preferences.getString(Contract.KEY_LATEST_CONFIG_NAME, Constants.WALLET_MAINNET_NAME);
+        return preferences.getString(Contract.KEY_LATEST_CONFIG_NAME, TestNetDummyConfig.NAME);
     }
 }
