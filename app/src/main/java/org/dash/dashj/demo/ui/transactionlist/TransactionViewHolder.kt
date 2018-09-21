@@ -42,7 +42,11 @@ class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
                 toAddresses.add(toAddress)
             }
         }
-        addressView.text = destAddress.toString()
+        if (destAddress != null) {
+            addressView.text = destAddress.toString()
+        } else {
+            addressView.text = toAddresses.joinToString(separator = "\n")
+        }
     }
 
     private fun getNullAddress(network: org.bitcoinj.core.NetworkParameters): Address {
