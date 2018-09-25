@@ -22,9 +22,7 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.utils_fragment.view.*
 import org.bitcoinj.core.AddressFormatException
 import org.bitcoinj.core.DumpedPrivateKey
-import org.dash.dashj.demo.R
-import org.dash.dashj.demo.Utils
-import org.dash.dashj.demo.WalletManager
+import org.dash.dashj.demo.*
 import org.dash.dashj.demo.event.SyncUpdateEvent
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -67,6 +65,7 @@ class UtilsFragment : Fragment() {
         viewModel.blockchainState.observe(this, Observer {
             val message = when {
                 it!!.blocksLeft == 0 -> "Blockchain synced (${Utils.format(Date())})"
+                it.blocksLeft < 0 -> "Loading info..."
                 else -> "Best chain date: ${Utils.format(it.bestChainDate)} (${it.bestChainHeight})\nBlocks left: ${it.blocksLeft}"
             }
             layoutView.bottomInfoView.visibility = View.VISIBLE
@@ -74,7 +73,7 @@ class UtilsFragment : Fragment() {
             //Snackbar.make(layoutView, message, Snackbar.LENGTH_LONG).setAction("Action", null).show()
         })
         activity!!.setTitle(R.string.fragment_utils_title)
-//        (activity as MainActivity).setSubTitle(WalletManager.getInstance().configName)
+        (activity as MainActivity).setSubTitle(MainPreferences.getInstance().latestConfigName)
     }
 
     override fun onStart() {

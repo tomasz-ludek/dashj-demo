@@ -12,9 +12,24 @@ public class MainPreferences {
         static final String KEY_LATEST_CONFIG_NAME = "key_latest_config_name";
     }
 
+    private static MainPreferences INSTANCE;
     private final SharedPreferences preferences;
 
-    public MainPreferences(Context context) {
+    public static MainPreferences getInstance() {
+        if (INSTANCE == null) {
+            throw new IllegalStateException("Not initialized");
+        }
+        return INSTANCE;
+    }
+
+    public static synchronized void init(Context context) {
+        INSTANCE = new MainPreferences(context.getApplicationContext());
+    }
+
+    private MainPreferences(Context context) {
+        if (INSTANCE != null) {
+            throw new IllegalStateException("Already initialized");
+        }
         preferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 

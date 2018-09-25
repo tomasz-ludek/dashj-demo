@@ -48,8 +48,8 @@ public class MainApplication extends Application {
         Threading.throwOnLockCycles();
         org.bitcoinj.core.Context.enableStrictMode();
 
-        MainPreferences preferences = new MainPreferences(this);
-        activateConfig(preferences.getLatestConfigName());
+        MainPreferences.init(this);
+        activateConfig(MainPreferences.getInstance().getLatestConfigName());
     }
 
     private void activateConfig(final String walletName) {

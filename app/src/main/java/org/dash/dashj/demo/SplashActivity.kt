@@ -16,8 +16,8 @@ class SplashActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         Handler().postDelayed({
-            val preferences = MainPreferences(this@SplashActivity)
-            WalletAppKitService.init(this, MainApplication.walletConfigMap[preferences.latestConfigName]!!)
+            val latestConfigName = MainPreferences.getInstance().latestConfigName
+            WalletAppKitService.init(this, MainApplication.walletConfigMap[latestConfigName]!!)
 
             val intent = Intent(this, MainActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

@@ -12,6 +12,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.base_list_fragment.view.*
+import org.dash.dashj.demo.MainActivity
+import org.dash.dashj.demo.MainPreferences
 import org.dash.dashj.demo.R
 import org.dash.dashj.demo.Utils
 import org.dash.dashj.demo.event.WalletReloadEvent
@@ -52,7 +54,7 @@ abstract class BaseListFragment<T : RecyclerView.Adapter<out RecyclerView.ViewHo
     }
 
     protected open fun initView() {
-//        (activity as MainActivity).setSubTitle(WalletManager.getInstance().configName)
+        (activity as MainActivity).setSubTitle(MainPreferences.getInstance().latestConfigName)
         layoutView.infoView.visibility = View.GONE
         layoutView.recyclerView.layoutManager = LinearLayoutManager(context)
         layoutView.recyclerView.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
@@ -79,8 +81,9 @@ abstract class BaseListFragment<T : RecyclerView.Adapter<out RecyclerView.ViewHo
     protected open fun bindBaseViewModel() {
         baseViewModel.blockchainState.observe(this, Observer {
             val message = when {
-                it!!.blocksLeft > 0 -> "Best chain date: ${Utils.format(it.bestChainDate)} (${it.bestChainHeight})\nBlocks left: ${it.blocksLeft}"
-                else -> "Blockchain synced (${Utils.format(Date())})"
+                it!!.blocksLeft == 0 -> "Blockchain synced (${Utils.format(Date())})"
+                it.blocksLeft < 0 -> "Loading info..."
+                else -> "Best chain date: ${Utils.format(it.bestChainDate)} (${it.bestChainHeight})\nBlocks left: ${it.blocksLeft}"
             }
             layoutView.bottomInfoView.visibility = View.VISIBLE
             layoutView.bottomInfoView.text = message

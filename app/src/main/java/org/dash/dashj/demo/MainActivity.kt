@@ -23,7 +23,7 @@ import org.dash.dashj.demo.ui.sporklist.SporkListFragment
 import org.dash.dashj.demo.ui.transactionlist.TransactionListFragment
 import org.dash.dashj.demo.ui.util.UtilsFragment
 import org.dashj.dashjinterface.WalletAppKitService
-import org.dashj.dashjinterface.config.DevNetDraConfig
+import org.dashj.dashjinterface.config.DevNetDraDummyConfig
 import org.dashj.dashjinterface.config.MainNetConfig
 import org.dashj.dashjinterface.config.TestNetConfig
 import org.dashj.dashjinterface.config.TestNetDummyConfig
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
         setSupportActionBar(toolbar)
-        preferences = MainPreferences(this)
+        preferences = MainPreferences.getInstance()
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
 
         headerView.findViewById<View>(R.id.draDevnetActionView).setOnClickListener {
-            switchWallet(DevNetDraConfig.NAME)
+            switchWallet(DevNetDraDummyConfig.NAME)
         }
 
         headerView.findViewById<View>(R.id.dummyTestnetActionView).setOnClickListener {
