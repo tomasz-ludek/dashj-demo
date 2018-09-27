@@ -31,7 +31,9 @@
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
 
-        <activity android:name=".SplashActivity" />
+        <activity
+            android:name=".SplashActivity"
+            android:noHistory="true" />
 
         <service android:name="org.dashj.dashjinterface.WalletAppKitService" />
 

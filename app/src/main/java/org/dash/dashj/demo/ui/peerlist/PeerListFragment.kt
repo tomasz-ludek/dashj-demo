@@ -31,6 +31,7 @@ class PeerListFragment : BaseListFragment<PeerListAdapter, PeerListViewModel>() 
             adapter.replace(it)
             viewModel.hostNames.fire(it)
             updateView(it!!.isNotEmpty())
+            setInfo("Peers count: ${it.size}")
         })
 
         viewModel.hostNames.observe(this, Observer { hostNameMap ->

@@ -49,7 +49,8 @@
                     android:hint="IP:port"
                     android:importantForAutofill="no"
                     android:inputType="textFilter"
-                    android:maxLength="128" />
+                    android:maxLength="128"
+                    android:text="109.235.67.212:9999" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -63,7 +64,8 @@
                     android:layout_height="wrap_content"
                     android:hint="masternodeprivkey"
                     android:importantForAutofill="no"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:text="7r2mbNcLT8xdeQaE1ME37t39Jepg7KUP21xqQgB9M38FMfwj9NT" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -78,7 +80,8 @@
                     android:hint="collateral_output_txid"
                     android:importantForAutofill="no"
                     android:inputType="textFilter"
-                    android:maxLength="128" />
+                    android:maxLength="128"
+                    android:text="887a4d9a080299df5ae5df61ee5b07cd291404f7a293ab5eb15ad967241c5ad5" />
 
             </android.support.design.widget.TextInputLayout>
 
@@ -93,7 +96,8 @@
                     android:hint="collateral_output_index"
                     android:importantForAutofill="no"
                     android:inputType="phone"
-                    android:maxLength="128" />
+                    android:maxLength="128"
+                    android:text="1" />
 
             </android.support.design.widget.TextInputLayout>
 

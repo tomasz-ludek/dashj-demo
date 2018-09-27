@@ -64,13 +64,16 @@ class UtilsFragment : Fragment() {
         })
         viewModel.blockchainState.observe(this, Observer {
             val message = when {
-                it!!.blocksLeft == 0 -> "Blockchain synced (${Utils.format(Date())})"
-                it.blocksLeft < 0 -> "Loading info..."
+                (it!!.blocksLeft < 0 || (it.blocksLeft == 0 && it.bestChainHeight == 0)) -> "Loading info..."
+                it.blocksLeft == 0 -> "Blockchain synced (${Utils.format(Date())})"
                 else -> "Best chain date: ${Utils.format(it.bestChainDate)} (${it.bestChainHeight})\nBlocks left: ${it.blocksLeft}"
             }
             layoutView.bottomInfoView.visibility = View.VISIBLE
             layoutView.bottomInfoView.text = message
             //Snackbar.make(layoutView, message, Snackbar.LENGTH_LONG).setAction("Action", null).show()
+        })
+        viewModel.djService.observe(this, Observer { djServiceLiveData ->
+            Toast.makeText(activity, if (djServiceLiveData != null) "Connected" else "Disconnected", Toast.LENGTH_LONG).show()
         })
         activity!!.setTitle(R.string.fragment_utils_title)
         (activity as MainActivity).setSubTitle(MainPreferences.getInstance().latestConfigName)
@@ -98,9 +101,10 @@ class UtilsFragment : Fragment() {
     private fun initView() {
         layoutView.addressView.setOnClickListener {
             val clipboard = activity!!.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-            val clip = ClipData.newPlainText("currentReceiveAddress", layoutView.balanceView.text)
+            val clip = ClipData.newPlainText("currentReceiveAddress", layoutView.addressView.text)
             clipboard.primaryClip = clip
             Toast.makeText(activity, "address has been copied to clipboard", Toast.LENGTH_LONG).show()
+            Log.d("currentReceiveAddress", layoutView.addressView.text.toString())
         }
         layoutView.toStringBtnView.setOnClickListener {
             val toString = walletManager.wallet.toString(true, true, true, null)

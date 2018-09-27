@@ -1,7 +1,6 @@
 package org.dash.dashj.demo
 
 import android.app.ActivityOptions
-import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
@@ -16,6 +15,7 @@ import kotlinx.android.synthetic.main.main_activity.*
 import kotlinx.android.synthetic.main.main_app_bar.*
 import org.dash.dashj.demo.ui.addresshierarchy.AddressHierarchyFragment
 import org.dash.dashj.demo.ui.blocklist.BlockListFragment
+import org.dash.dashj.demo.ui.evouserlist.EvoUserListFragment
 import org.dash.dashj.demo.ui.governancelist.GovernanceListFragment
 import org.dash.dashj.demo.ui.masternodelist.MasternodeListFragment
 import org.dash.dashj.demo.ui.peerlist.PeerListFragment
@@ -103,11 +103,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun switchWallet(walletName: String) {
-        preferences.latestConfigName = walletName
-        stopServiceWhenOnStop = true
-        val options = ActivityOptions.makeCustomAnimation(this, android.R.anim.fade_in, android.R.anim.fade_out)
-        startActivity(Intent(this, SplashActivity::class.java), options.toBundle())
-        finish()
+        val sameWallet = (preferences.latestConfigName == walletName)
+        if (!sameWallet) {
+            preferences.latestConfigName = walletName
+            stopServiceWhenOnStop = true
+
+            val options = ActivityOptions.makeCustomAnimation(this, android.R.anim.fade_in, android.R.anim.fade_out)
+            val intent = SplashActivity.createIntent(this, sameWallet)
+            startActivity(intent, options.toBundle())
+            finish()
+        } else {
+            drawer_layout.closeDrawer(GravityCompat.START)
+        }
     }
 
     override fun onStop() {
@@ -174,6 +181,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.nav_address -> {
                 switchFragment(AddressHierarchyFragment.newInstance())
+            }
+            R.id.nav_evo_users -> {
+                switchFragment(EvoUserListFragment.newInstance())
             }
         }
         drawer_layout.closeDrawer(GravityCompat.START)

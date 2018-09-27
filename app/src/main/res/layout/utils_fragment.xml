@@ -113,6 +113,14 @@
         android:padding="16dp"
         android:text="Import key" />
 
+    <TextView
+        android:id="@+id/createUserBtnView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="16dp"
+        android:text="Create User" />
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import org.dashj.dashjinterface.config.DevNetDraDummyConfig;
 import org.dashj.dashjinterface.config.TestNetDummyConfig;
 
 public class MainPreferences {

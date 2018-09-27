@@ -43,7 +43,7 @@ public class MainApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-//        initLogging();
+        initLogging();
 
         Threading.throwOnLockCycles();
         org.bitcoinj.core.Context.enableStrictMode();
@@ -63,6 +63,7 @@ public class MainApplication extends Application {
 
     private void initLogging() {
         final File logDir = getDir("log", MODE_PRIVATE);
+
         final File logFile = new File(logDir, "wallet.log");
 
         final LoggerContext context = (LoggerContext) LoggerFactory.getILoggerFactory();
