@@ -2,13 +2,11 @@ package org.dash.dashj.demo.ui.peerlist
 
 import android.arch.lifecycle.Observer
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.event.PeerListRequestEvent
 import org.dash.dashj.demo.ui.BaseListFragment
-import org.greenrobot.eventbus.EventBus
 
 class PeerListFragment : BaseListFragment<PeerListAdapter, PeerListViewModel>() {
 
-    override val emptyStateMessageResId: Int
+    override val progressMessageResId: Int
         get() = R.string.connecting_state_message
 
     companion object {
@@ -40,6 +38,6 @@ class PeerListFragment : BaseListFragment<PeerListAdapter, PeerListViewModel>() 
     }
 
     override fun onRefresh() {
-        EventBus.getDefault().post(PeerListRequestEvent())
+
     }
 }

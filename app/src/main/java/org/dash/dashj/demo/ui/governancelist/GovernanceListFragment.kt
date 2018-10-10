@@ -9,15 +9,13 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Filterable
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.event.GovernanceObjectsUpdateEvent
 import org.dash.dashj.demo.ui.BaseListFragment
-import org.greenrobot.eventbus.EventBus
 
 class GovernanceListFragment : BaseListFragment<GovernanceListAdapter, GovernanceListViewModel>() {
 
     private lateinit var searchMenuItem: MenuItem
 
-    override val emptyStateMessageResId: Int
+    override val progressMessageResId: Int
         get() = R.string.default_empty_state_message
 
     companion object {
@@ -55,7 +53,6 @@ class GovernanceListFragment : BaseListFragment<GovernanceListAdapter, Governanc
         if (::searchMenuItem.isInitialized) {
             searchMenuItem.collapseActionView()
         }
-        EventBus.getDefault().post(GovernanceObjectsUpdateEvent())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

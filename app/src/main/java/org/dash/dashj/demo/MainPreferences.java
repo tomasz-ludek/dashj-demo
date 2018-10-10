@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import org.dashj.dashjinterface.config.DevNetDraConfig;
 import org.dashj.dashjinterface.config.DevNetDraDummyConfig;
+import org.dashj.dashjinterface.config.MainNetConfig;
+import org.dashj.dashjinterface.config.TestNetConfig;
 import org.dashj.dashjinterface.config.TestNetDummyConfig;
 
 public class MainPreferences {
@@ -39,6 +42,6 @@ public class MainPreferences {
     }
 
     public String getLatestConfigName() {
-        return preferences.getString(Contract.KEY_LATEST_CONFIG_NAME, TestNetDummyConfig.NAME);
+        return preferences.getString(Contract.KEY_LATEST_CONFIG_NAME, MainApplication.DevNetDraDerp.NAME);
     }
 }

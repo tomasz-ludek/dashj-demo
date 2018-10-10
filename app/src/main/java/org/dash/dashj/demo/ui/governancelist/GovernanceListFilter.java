@@ -4,7 +4,6 @@ import android.text.TextUtils;
 import android.widget.Filter;
 
 import org.bitcoinj.governance.GovernanceObject;
-import org.dash.dashj.demo.WalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,8 @@ public abstract class GovernanceListFilter extends Filter {
 
     @Override
     protected FilterResults performFiltering(CharSequence constraint) {
-        WalletManager.getInstance().propagateContext();
+//        WalletManager.getInstance().propagateContext();
+//        org.bitcoinj.core.Context.propagate(getWallet().getContext());
         FilterResults results = new FilterResults();
         if (!TextUtils.isEmpty(constraint)) {
             constraint = constraint.toString().toLowerCase();

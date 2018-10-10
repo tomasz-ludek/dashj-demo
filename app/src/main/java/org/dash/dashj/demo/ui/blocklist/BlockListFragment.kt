@@ -2,14 +2,12 @@ package org.dash.dashj.demo.ui.blocklist
 
 import android.arch.lifecycle.Observer
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.event.BlockListRequestEvent
 import org.dash.dashj.demo.ui.BaseListFragment
-import org.greenrobot.eventbus.EventBus
 
 
 class BlockListFragment : BaseListFragment<BlockListAdapter, BlockListViewModel>() {
 
-    override val emptyStateMessageResId: Int
+    override val progressMessageResId: Int
         get() = R.string.default_empty_state_message
 
     companion object {
@@ -41,6 +39,6 @@ class BlockListFragment : BaseListFragment<BlockListAdapter, BlockListViewModel>
     }
 
     override fun onRefresh() {
-        EventBus.getDefault().post(BlockListRequestEvent())
+
     }
 }

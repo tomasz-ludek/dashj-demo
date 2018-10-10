@@ -14,4 +14,8 @@ class UtilsViewModel(application: Application) : DjInterfaceViewModel(applicatio
     private val _blockchainState = BlockchainStateLiveData(application)
     val blockchainState
         get() = _blockchainState
+
+    fun walletToString(): String? {
+        return djService.value?.wallet!!.toString(true, true, true, null)
+    }
 }

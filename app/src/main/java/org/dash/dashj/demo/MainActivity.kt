@@ -7,9 +7,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.TextView
 import kotlinx.android.synthetic.main.main_activity.*
 import kotlinx.android.synthetic.main.main_app_bar.*
@@ -23,10 +21,6 @@ import org.dash.dashj.demo.ui.sporklist.SporkListFragment
 import org.dash.dashj.demo.ui.transactionlist.TransactionListFragment
 import org.dash.dashj.demo.ui.util.UtilsFragment
 import org.dashj.dashjinterface.WalletAppKitService
-import org.dashj.dashjinterface.config.DevNetDraDummyConfig
-import org.dashj.dashjinterface.config.MainNetConfig
-import org.dashj.dashjinterface.config.TestNetConfig
-import org.dashj.dashjinterface.config.TestNetDummyConfig
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -65,25 +59,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setCheckedItem(R.id.nav_peers)
         nav_view.setNavigationItemSelectedListener(this)
 
-        headerView.findViewById<View>(R.id.mainnetActionView).setOnClickListener {
-            switchWallet(MainNetConfig.NAME)
-        }
-
-        headerView.findViewById<View>(R.id.testnetActionView).setOnClickListener {
-            switchWallet(TestNetConfig.NAME)
-        }
-
-        headerView.findViewById<View>(R.id.draDevnetActionView).setOnClickListener {
-            switchWallet(DevNetDraDummyConfig.NAME)
-        }
-
-        headerView.findViewById<View>(R.id.dummyTestnetActionView).setOnClickListener {
-            switchWallet(TestNetDummyConfig.NAME)
-        }
-
         headerView.findViewById<View>(R.id.showWalletsView).setOnClickListener {
             val walletsListView = headerView.findViewById<View>(R.id.walletsListView)
             expandWalletsView(walletsListView.visibility == View.GONE)
+        }
+
+        val walletsListView = headerView.findViewById<ViewGroup>(R.id.walletsListView)
+        val layoutInflater = LayoutInflater.from(this)
+        for ((key, _) in MainApplication.walletConfigMap) {
+            val walletActionView = layoutInflater.inflate(R.layout.wallet_item_view, walletsListView, false) as TextView
+            walletsListView.addView(walletActionView)
+            walletActionView.tag = key
+            walletActionView.text = key
+            walletActionView.setOnClickListener {
+                switchWallet(it.tag.toString())
+            }
         }
 
         headerView.findViewById<TextView>(R.id.activeWalletView).text = preferences.latestConfigName

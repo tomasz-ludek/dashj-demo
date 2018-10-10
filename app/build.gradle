@@ -70,7 +70,7 @@ dependencies {
     }
     implementation 'com.github.tony19:logback-android-core:1.1.1-6'
 
-    implementation 'org.dashj:dashj-interface:0.9.1'
+    implementation 'org.dashj:dashj-interface:1.0-SNAPSHOT'
 //    implementation project(':dashj-interface')
     implementation "org.dashj:dashj-core:$dashj_version"
 }

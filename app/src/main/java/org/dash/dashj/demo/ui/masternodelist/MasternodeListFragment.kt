@@ -9,15 +9,13 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.Filterable
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.event.MasternodeListUpdateEvent
 import org.dash.dashj.demo.ui.BaseListFragment
-import org.greenrobot.eventbus.EventBus
 
 class MasternodeListFragment : BaseListFragment<MasternodeListAdapter, MasternodeListViewModel>() {
 
     private lateinit var searchMenuItem: MenuItem
 
-    override val emptyStateMessageResId: Int
+    override val progressMessageResId: Int
         get() = R.string.default_empty_state_message
 
     companion object {
@@ -55,7 +53,6 @@ class MasternodeListFragment : BaseListFragment<MasternodeListAdapter, Masternod
         if (::searchMenuItem.isInitialized) {
             searchMenuItem.collapseActionView()
         }
-        EventBus.getDefault().post(MasternodeListUpdateEvent())
     }
 
     override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {

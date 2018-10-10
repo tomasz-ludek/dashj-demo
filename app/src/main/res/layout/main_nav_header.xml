@@ -73,60 +73,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/mainnetActionView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_bubble_chart_white_24dp"
-            android:drawablePadding="24dp"
-            android:foreground="?attr/selectableItemBackground"
-            android:gravity="center_vertical"
-            android:padding="16dp"
-            android:text="mainnet"
-            android:textColor="#ffffff"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/testnetActionView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_bubble_chart_white_24dp"
-            android:drawablePadding="24dp"
-            android:foreground="?attr/selectableItemBackground"
-            android:gravity="center_vertical"
-            android:padding="16dp"
-            android:text="testnet"
-            android:textColor="#ffffff"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/dummyTestnetActionView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_bubble_chart_white_24dp"
-            android:drawablePadding="24dp"
-            android:foreground="?attr/selectableItemBackground"
-            android:gravity="center_vertical"
-            android:padding="16dp"
-            android:text="dummy (testnet)"
-            android:textColor="#ffffff"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/draDevnetActionView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:drawableStart="@drawable/ic_bubble_chart_white_24dp"
-            android:drawablePadding="24dp"
-            android:foreground="?attr/selectableItemBackground"
-            android:gravity="center_vertical"
-            android:padding="16dp"
-            android:text="dummy (devnet-DRA)"
-            android:textColor="#ffffff"
-            android:textStyle="bold" />
-
-    </LinearLayout>
+        android:visibility="gone" />
 
 </LinearLayout>

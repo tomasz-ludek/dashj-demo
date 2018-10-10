@@ -1,7 +1,6 @@
 package org.dash.dashj.demo.ui.evouserlist
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
 import org.bitcoinj.core.Coin
 import org.bitcoinj.core.Transaction
 import org.bitcoinj.evolution.EvolutionUser
@@ -24,11 +23,16 @@ class EvoUserListViewModel(application: Application) : DjInterfaceViewModel(appl
     val showErrorMessageAction
         get() = _showErrorMessageAction
 
-    fun createUser() {
-        djService.value?.createUser(object : WalletAppKitService.Result<Transaction> {
+    private val _showProgressDialogAction = SingleLiveEvent<String>()
+    val showProgressDialogAction
+        get() = _showProgressDialogAction
+
+    fun createUser(userName: String, credits: Coin) {
+        _showProgressDialogAction.call("SubTxRegister...")
+        djService.value?.createUser(userName, credits, object : WalletAppKitService.Result<Transaction> {
 
             override fun onSuccess(result: Transaction) {
-                val message = "Transaction hash: ${result.hashAsString}"
+                val message = "Username: $userName\n\nTransaction hash: ${result.hashAsString}"
                 _showMessageAction.call(Pair("SubTxRegister", message))
             }
 
@@ -39,10 +43,12 @@ class EvoUserListViewModel(application: Application) : DjInterfaceViewModel(appl
     }
 
     fun topUpUser(evoUser: EvolutionUser, credits: Coin) {
+        _showProgressDialogAction.call("SubTxTopup...")
         djService.value?.topUpUser(evoUser, credits, object : WalletAppKitService.Result<Transaction> {
 
             override fun onSuccess(result: Transaction) {
-                val message = "Transaction hash: ${result.hashAsString}"
+                val message = "Username: ${evoUser.userName}\n" +
+                        "\nTransaction hash: ${result.hashAsString}"
                 _showMessageAction.call(Pair("SubTxTopup", message))
             }
 
@@ -53,6 +59,7 @@ class EvoUserListViewModel(application: Application) : DjInterfaceViewModel(appl
     }
 
     fun reset(evoUser: EvolutionUser) {
+        _showProgressDialogAction.call("SubTxResetKey...")
         djService.value?.resetUser(evoUser, object : WalletAppKitService.Result<Transaction> {
 
             override fun onSuccess(result: Transaction) {

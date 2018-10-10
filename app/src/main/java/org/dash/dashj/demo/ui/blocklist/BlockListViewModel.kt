@@ -1,13 +1,12 @@
 package org.dash.dashj.demo.ui.blocklist
 
 import android.app.Application
-import android.arch.lifecycle.AndroidViewModel
 import android.arch.lifecycle.LiveData
 import org.bitcoinj.core.Transaction
-import org.dash.dashj.demo.WalletManager
 import org.dashj.dashjinterface.data.BlockchainSyncLiveData
+import org.dashj.dashjinterface.data.DjInterfaceViewModel
 
-class BlockListViewModel(application: Application) : AndroidViewModel(application) {
+class BlockListViewModel(application: Application) : DjInterfaceViewModel(application) {
 
     private val _blockList = BlockchainSyncLiveData(application)
     val blockList: BlockchainSyncLiveData
@@ -17,7 +16,7 @@ class BlockListViewModel(application: Application) : AndroidViewModel(applicatio
     val transactionSet: LiveData<Set<Transaction>>
         get() {
             if (!_transactionSet.isLoaded) {
-                _transactionSet.loadTransactions(WalletManager.getInstance().wallet)
+                _transactionSet.loadTransactions(djService.value!!.wallet)
             }
             return _transactionSet
         }

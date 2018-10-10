@@ -2,13 +2,11 @@ package org.dash.dashj.demo.ui.transactionlist
 
 import android.arch.lifecycle.Observer
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.event.TransactionListRequestEvent
 import org.dash.dashj.demo.ui.BaseListFragment
-import org.greenrobot.eventbus.EventBus
 
 class TransactionListFragment : BaseListFragment<TransactionListAdapter, TransactionListViewModel>() {
 
-    override val emptyStateMessageResId: Int
+    override val progressMessageResId: Int
         get() = R.string.loading_state_message
 
     companion object {
@@ -35,6 +33,6 @@ class TransactionListFragment : BaseListFragment<TransactionListAdapter, Transac
     }
 
     override fun onRefresh() {
-        EventBus.getDefault().post(TransactionListRequestEvent())
+
     }
 }

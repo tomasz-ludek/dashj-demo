@@ -9,7 +9,8 @@ import org.bitcoinj.wallet.Wallet
 
 class TransactionListLiveData : MutableLiveData<Set<Transaction>>() {
 
-    val isLoaded get() = value != null
+    val isLoaded
+        get() = value != null
 
     fun loadTransactions(wallet: Wallet) {
         LoadTransactionsTask().execute(wallet)

@@ -2,14 +2,12 @@ package org.dash.dashj.demo.ui.addresshierarchy
 
 import android.arch.lifecycle.Observer
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.event.AddressesHierarchyRequestEvent
 import org.dash.dashj.demo.ui.BaseListFragment
-import org.greenrobot.eventbus.EventBus
 
 
 class AddressHierarchyFragment : BaseListFragment<AddressHierarchyAdapter, AddressHierarchyViewModel>() {
 
-    override val emptyStateMessageResId: Int
+    override val progressMessageResId: Int
         get() = R.string.default_empty_state_message
 
     companion object {
@@ -19,7 +17,7 @@ class AddressHierarchyFragment : BaseListFragment<AddressHierarchyAdapter, Addre
     override fun viewModelType(): Class<AddressHierarchyViewModel> = AddressHierarchyViewModel::class.java
 
     override fun createAdapter(): AddressHierarchyAdapter {
-        return AddressHierarchyAdapter(activity)
+        return AddressHierarchyAdapter(activity!!)
     }
 
     override fun initView() {
@@ -38,6 +36,6 @@ class AddressHierarchyFragment : BaseListFragment<AddressHierarchyAdapter, Addre
     }
 
     override fun onRefresh() {
-        EventBus.getDefault().post(AddressesHierarchyRequestEvent())
+
     }
 }

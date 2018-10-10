@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -7,25 +8,54 @@
         android:id="@+id/rootAnimatorView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:inAnimation="@android:anim/fade_in"
+        android:outAnimation="@android:anim/fade_out">
 
         <RelativeLayout
+            android:id="@+id/emptyStatePane"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/emptyStateIcon"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:layout_centerHorizontal="true"
+                android:src="@drawable/ic_dash_d_gray_24dp"
+                tools:ignore="ContentDescription" />
+
+            <TextView
+                android:id="@+id/emptyStateMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/emptyStateIcon"
+                android:gravity="center"
+                android:textColor="#bbbbbb"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/progressPane"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center">
 
             <ProgressBar
-                android:id="@+id/progress"
+                android:id="@+id/progressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center" />
 
             <TextView
-                android:id="@+id/emptyStateMessage"
+                android:id="@+id/progressMessage"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/progress"
+                android:layout_below="@+id/progressBar"
                 android:gravity="center"
                 android:text="@string/default_empty_state_message"
                 android:textSize="16sp" />
@@ -33,6 +63,7 @@
         </RelativeLayout>
 
         <LinearLayout
+            android:id="@+id/readyStatePane"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -72,21 +103,35 @@
 
             </android.support.v4.widget.SwipeRefreshLayout>
 
-            <TextView
-                android:id="@+id/bottomInfoView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/colorPrimary"
-                android:paddingStart="16dp"
-                android:paddingTop="8dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="8dp"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                android:textColor="@android:color/white"
-                android:visibility="gone" />
-
         </LinearLayout>
 
     </ViewAnimator>
+
+    <ViewSwitcher
+        android:id="@+id/bottomInfoView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:inAnimation="@android:anim/fade_in"
+        android:outAnimation="@android:anim/fade_out">
+
+        <ProgressBar
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/bottomInfoMessageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            android:textColor="@android:color/white"
+            android:visibility="invisible" />
+
+    </ViewSwitcher>
 
 </LinearLayout>

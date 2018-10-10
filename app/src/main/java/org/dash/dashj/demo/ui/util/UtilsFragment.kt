@@ -22,11 +22,11 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.utils_fragment.view.*
 import org.bitcoinj.core.AddressFormatException
 import org.bitcoinj.core.DumpedPrivateKey
-import org.dash.dashj.demo.*
-import org.dash.dashj.demo.event.SyncUpdateEvent
+import org.dash.dashj.demo.MainActivity
+import org.dash.dashj.demo.MainPreferences
+import org.dash.dashj.demo.R
+import org.dash.dashj.demo.Utils
 import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import org.greenrobot.eventbus.ThreadMode
 import java.util.*
 
 
@@ -39,8 +39,6 @@ class UtilsFragment : Fragment() {
     private lateinit var viewModel: UtilsViewModel
 
     private lateinit var layoutView: View
-
-    private lateinit var walletManager: WalletManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,39 +61,27 @@ class UtilsFragment : Fragment() {
             layoutView.addressView.text = it.currentReceiveAddress.toBase58()
         })
         viewModel.blockchainState.observe(this, Observer {
-            val message = when {
-                (it!!.blocksLeft < 0 || (it.blocksLeft == 0 && it.bestChainHeight == 0)) -> "Loading info..."
-                it.blocksLeft == 0 -> "Blockchain synced (${Utils.format(Date())})"
-                else -> "Best chain date: ${Utils.format(it.bestChainDate)} (${it.bestChainHeight})\nBlocks left: ${it.blocksLeft}"
+            Log.d("blockchainState", "${it!!.blocksLeft},\t${it.bestChainHeight}")
+
+            val initialising = (it.blocksLeft == 0 && it.bestChainHeight == 0)
+            val viewState = if (initialising) 0 else 1
+            if (layoutView.bottomInfoView.displayedChild != viewState) {
+                layoutView.bottomInfoView.displayedChild = viewState
             }
-            layoutView.bottomInfoView.visibility = View.VISIBLE
-            layoutView.bottomInfoView.text = message
-            //Snackbar.make(layoutView, message, Snackbar.LENGTH_LONG).setAction("Action", null).show()
+            if (initialising) {
+                layoutView.bottomInfoMessageView.text = ""
+            } else {
+                layoutView.bottomInfoMessageView.text = when {
+                    it.blocksLeft == 0 -> "Blockchain synced (${Utils.format(Date())})"
+                    else -> "Best chain date: ${Utils.format(it.bestChainDate)} (${it.bestChainHeight})\nBlocks left: ${it.blocksLeft}"
+                }
+            }
         })
-        viewModel.djService.observe(this, Observer { djServiceLiveData ->
-            Toast.makeText(activity, if (djServiceLiveData != null) "Connected" else "Disconnected", Toast.LENGTH_LONG).show()
+        viewModel.djService.observe(this, Observer { _ ->
+            //Toast.makeText(activity, if (djServiceLiveData != null) "Connected" else "Disconnected", Toast.LENGTH_LONG).show()
         })
         activity!!.setTitle(R.string.fragment_utils_title)
         (activity as MainActivity).setSubTitle(MainPreferences.getInstance().latestConfigName)
-    }
-
-    override fun onStart() {
-        super.onStart()
-        EventBus.getDefault().register(this)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        EventBus.getDefault().unregister(this)
-    }
-
-    @Subscribe(sticky = true, threadMode = ThreadMode.MAIN)
-    fun onSyncUpdateEvent(event: SyncUpdateEvent) {
-        layoutView.bottomInfoView?.let {
-            val message = ("Chain download %.0f%% done\nBlocks left: ${event.blocksSoFar} (${Utils.format(event.date)})").format(event.pct)
-            it.visibility = View.VISIBLE
-            it.text = message
-        }
     }
 
     private fun initView() {
@@ -107,8 +93,7 @@ class UtilsFragment : Fragment() {
             Log.d("currentReceiveAddress", layoutView.addressView.text.toString())
         }
         layoutView.toStringBtnView.setOnClickListener {
-            val toString = walletManager.wallet.toString(true, true, true, null)
-            Log.d("wallet.toString(...)", "wallet.toString(...) $toString")
+            Log.d("wallet.toString(...)", "wallet.toString(...) ${viewModel.walletToString()}")
         }
         layoutView.importAddressBtnView.setOnClickListener {
             val builder = AlertDialog.Builder(activity!!)
@@ -142,7 +127,7 @@ class UtilsFragment : Fragment() {
             Snackbar.make(layoutView, "Incorrect format of key", Snackbar.LENGTH_LONG).show()
             return
         }
-
+/*
         val wallet = walletManager.wallet
         var message: String
         try {
@@ -153,6 +138,7 @@ class UtilsFragment : Fragment() {
             message = "Unable to import key: ${x.message}"
         }
         Snackbar.make(layoutView, message, Snackbar.LENGTH_LONG).setAction("Action", null).show()
+*/
     }
 
     private fun dpToPx(dp: Int): Int {

@@ -5,7 +5,6 @@ import android.app.Application;
 import org.bitcoinj.utils.Threading;
 import org.dashj.dashjinterface.WalletAppKitService;
 import org.dashj.dashjinterface.config.DevNetDraConfig;
-import org.dashj.dashjinterface.config.DevNetDraDummyConfig;
 import org.dashj.dashjinterface.config.MainNetConfig;
 import org.dashj.dashjinterface.config.TestNetConfig;
 import org.dashj.dashjinterface.config.TestNetDummyConfig;
@@ -15,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import ch.qos.logback.classic.Level;
@@ -35,8 +35,8 @@ public class MainApplication extends Application {
         walletConfigMap.put(MainNetConfig.NAME, MainNetConfig.get());
         walletConfigMap.put(TestNetConfig.NAME, TestNetConfig.get());
         walletConfigMap.put(DevNetDraConfig.NAME, DevNetDraConfig.get());
-        walletConfigMap.put(TestNetDummyConfig.NAME, TestNetDummyConfig.get());
-        walletConfigMap.put(DevNetDraDummyConfig.NAME, DevNetDraDummyConfig.get());
+//        walletConfigMap.put(TestNetDummyConfig.NAME, TestNetDummyConfig.get());
+        walletConfigMap.put(DevNetDraDerp.NAME, DevNetDraDerp.get());
     }
 
     @Override
@@ -108,5 +108,25 @@ public class MainApplication extends Application {
         log.addAppender(fileAppender);
         log.addAppender(logcatAppender);
         log.setLevel(Level.INFO);
+    }
+
+    static class DevNetDraDerp extends org.dashj.dashjinterface.config.WalletConfig {
+
+        static String NAME = "derp (devnet-DRA)";
+
+        private static DevNetDraDerp INSTANCE = new DevNetDraDerp(
+                NAME,
+                Network.DEVNET_DRA,
+                "devnet-dra-derp",
+                null,
+                Constants.DUMMY_SEED);
+
+        static DevNetDraDerp get() {
+            return INSTANCE;
+        }
+
+        public DevNetDraDerp(String _name, Network _network, String _filesPrefix, String _checkpointsAssetPath, List<String> _seed) {
+            super(_name, _network, _filesPrefix, _checkpointsAssetPath, _seed);
+        }
     }
 }

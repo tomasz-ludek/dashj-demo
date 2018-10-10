@@ -2,13 +2,11 @@ package org.dash.dashj.demo.ui.sporklist
 
 import android.arch.lifecycle.Observer
 import org.dash.dashj.demo.R
-import org.dash.dashj.demo.event.SporkListRequestEvent
 import org.dash.dashj.demo.ui.BaseListFragment
-import org.greenrobot.eventbus.EventBus
 
 class SporkListFragment : BaseListFragment<SporkListAdapter, SporkListViewModel>() {
 
-    override val emptyStateMessageResId: Int
+    override val progressMessageResId: Int
         get() = R.string.default_empty_state_message
 
     companion object {
@@ -37,6 +35,6 @@ class SporkListFragment : BaseListFragment<SporkListAdapter, SporkListViewModel>
     }
 
     override fun onRefresh() {
-        EventBus.getDefault().post(SporkListRequestEvent())
+
     }
 }

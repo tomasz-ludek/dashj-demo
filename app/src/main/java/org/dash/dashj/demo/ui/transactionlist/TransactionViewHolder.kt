@@ -28,19 +28,19 @@ class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView),
         val toAddresses = mutableListOf<Address>()
 
         for (transactionOutput in transaction.outputs) {
-            val toAddress = Address.fromBase58(
-                    wallet.networkParameters,
-                    transactionOutput
-                            .scriptPubKey
-                            .getToAddress(wallet.networkParameters)
-                            .toBase58()
-            )
-            if (!transactionOutput.isMine(wallet)) {
-                destAddress = toAddress
-            }
-            if (toAddress !== getNullAddress(wallet.networkParameters)) {
-                toAddresses.add(toAddress)
-            }
+//            val toAddress = Address.fromBase58(
+//                    wallet.networkParameters,
+//                    transactionOutput
+//                            .scriptPubKey
+//                            .getToAddress(wallet.networkParameters)
+//                            .toBase58()
+//            )
+//            if (!transactionOutput.isMine(wallet)) {
+//                destAddress = toAddress
+//            }
+//            if (toAddress !== getNullAddress(wallet.networkParameters)) {
+//                toAddresses.add(toAddress)
+//            }
         }
         if (destAddress != null) {
             addressView.text = destAddress.toString()
