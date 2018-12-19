@@ -42,6 +42,6 @@ public class MainPreferences {
     }
 
     public String getLatestConfigName() {
-        return preferences.getString(Contract.KEY_LATEST_CONFIG_NAME, MainApplication.DevNetDraDerp.NAME);
+        return preferences.getString(Contract.KEY_LATEST_CONFIG_NAME, TestNetConfig.NAME);
     }
 }
